@@ -20,9 +20,12 @@ class Game {
         this.gameOver = false;
         this.gameWon = false;
         this.paused = false;
-        this.isDancing = false;
-        this.onDanceStart = null;
-        this.onDanceEnd = null;
+        this.isContractReview = false;
+        this.pendingVictory = false;
+        this.onContractSummaryStart = null;
+        this.onContractSummaryEnd = null;
+
+        this.contractStats = this.createEmptyContractStats();
 
         // Game timing
         this.dropInterval = 800; // ms between automatic drops
@@ -35,6 +38,8 @@ class Game {
         this.lastPlacedTime = 0;
         this.lastClearedLines = [];
         this.lastClearedTime = 0;
+        this.lastShipment = null;
+        this.pendingClear = null;
         this.isDropping = false; // For drop animation
         this.lastClearMessage = null; // Track line clear message
         this.lastClearMessageTime = 0;
@@ -45,20 +50,20 @@ class Game {
         // Tetromino definitions (with colors and rotation states)
         this.tetrominoes = {
             I: {
-                color: '#00ffff',
+                color: '#9a6a43',
                 shapes: [
                     [[1, 1, 1, 1]],
                     [[1], [1], [1], [1]]
                 ]
             },
             O: {
-                color: '#ffff00',
+                color: '#c08a58',
                 shapes: [
                     [[1, 1], [1, 1]]
                 ]
             },
             T: {
-                color: '#ff00ff',
+                color: '#8a5a38',
                 shapes: [
                     [[1, 1, 1], [0, 1, 0]],
                     [[0, 1], [1, 1], [0, 1]],
@@ -67,21 +72,21 @@ class Game {
                 ]
             },
             S: {
-                color: '#00ff00',
+                color: '#7a4d2d',
                 shapes: [
                     [[0, 1, 1], [1, 1, 0]],
                     [[1, 0], [1, 1], [0, 1]]
                 ]
             },
             Z: {
-                color: '#ff0000',
+                color: '#6d4528',
                 shapes: [
                     [[1, 1, 0], [0, 1, 1]],
                     [[0, 1], [1, 1], [1, 0]]
                 ]
             },
             J: {
-                color: '#0000ff',
+                color: '#5f3a24',
                 shapes: [
                     [[1, 0, 0], [1, 1, 1]],
                     [[1, 1], [1, 0], [1, 0]],
@@ -90,7 +95,7 @@ class Game {
                 ]
             },
             L: {
-                color: '#ff8800',
+                color: '#b17a48',
                 shapes: [
                     [[0, 0, 1], [1, 1, 1]],
                     [[1, 0], [1, 0], [1, 1]],
@@ -114,6 +119,15 @@ class Game {
                 this.board[y][x] = null;
             }
         }
+    }
+
+    createEmptyContractStats() {
+        return {
+            oneLineShipments: 0,
+            twoLineShipments: 0,
+            threeLineShipments: 0,
+            fullLoadShipments: 0
+        };
     }
 
     // Create a random tetromino piece
@@ -175,7 +189,7 @@ class Game {
 
     // Move piece left
     movePieceLeft() {
-        if (!this.currentPiece || this.paused || this.gameOver) return;
+        if (!this.currentPiece || this.paused || this.gameOver || this.pendingClear || this.isContractReview) return;
         if (!this.checkCollision(this.currentPiece, this.currentPiece.x - 1, this.currentPiece.y, this.currentPiece.rotation)) {
             this.currentPiece.x--;
             audioManager.playSoundMove();
@@ -184,7 +198,7 @@ class Game {
 
     // Move piece right
     movePieceRight() {
-        if (!this.currentPiece || this.paused || this.gameOver) return;
+        if (!this.currentPiece || this.paused || this.gameOver || this.pendingClear || this.isContractReview) return;
         if (!this.checkCollision(this.currentPiece, this.currentPiece.x + 1, this.currentPiece.y, this.currentPiece.rotation)) {
             this.currentPiece.x++;
             audioManager.playSoundMove();
@@ -193,7 +207,7 @@ class Game {
 
     // Rotate piece
     rotatePiece() {
-        if (!this.currentPiece || this.paused || this.gameOver) return;
+        if (!this.currentPiece || this.paused || this.gameOver || this.pendingClear || this.isContractReview) return;
         const newRotation = (this.currentPiece.rotation + 1) % this.currentPiece.shapes.length;
 
         if (!this.checkCollision(this.currentPiece, this.currentPiece.x, this.currentPiece.y, newRotation)) {
@@ -204,6 +218,7 @@ class Game {
 
     // Soft drop - accelerate falling (gradual, not instant)
     startSoftDrop() {
+        if (this.pendingClear || this.isContractReview) return;
         this.softDropActive = true;
         this.isDropping = true;
     }
@@ -216,7 +231,7 @@ class Game {
 
     // Hard drop - instant to bottom (for spacebar or other control)
     dropPieceToBottom() {
-        if (!this.currentPiece || this.paused || this.gameOver) return;
+        if (!this.currentPiece || this.paused || this.gameOver || this.pendingClear || this.isContractReview) return;
         while (!this.checkCollision(this.currentPiece, this.currentPiece.x, this.currentPiece.y + 1, this.currentPiece.rotation)) {
             this.currentPiece.y++;
         }
@@ -244,7 +259,8 @@ class Game {
             x: this.currentPiece.x,
             y: this.currentPiece.y,
             color: this.currentPiece.color,
-            shape: shape
+            shape: shape,
+            rotation: this.currentPiece.rotation
         };
         this.lastPlacedTime = Date.now();
 
@@ -278,13 +294,43 @@ class Game {
 
         if (linesCleared.length === 0) return;
 
-        // Track cleared lines for visual effect
-        this.lastClearedLines = linesCleared;
-        this.lastClearedTime = Date.now();
-
         // Sort in descending order to avoid index shifting issues
         // We must delete from bottom to top so indices don't change
         linesCleared.sort((a, b) => b - a);
+
+        const startedAt = Date.now();
+        const shipmentDuration = 2200;
+        this.pendingClear = {
+            lines: linesCleared,
+            startedAt: startedAt,
+            duration: shipmentDuration,
+            linesCount: linesCleared.length
+        };
+
+        this.lastShipment = {
+            type: 'boat',
+            linesCount: linesCleared.length,
+            startedAt: startedAt,
+            duration: shipmentDuration
+        };
+
+        audioManager.playSoundShipment(linesCleared.length);
+
+        // Play appropriate sound
+        if (linesCleared.length === 4) {
+            audioManager.playSoundStacker(); // Special sound for Stacker!
+        } else {
+            audioManager.playSoundLineClear();
+        }
+
+    }
+
+    finalizePendingClear() {
+        if (!this.pendingClear) return;
+
+        const linesCleared = [...this.pendingClear.lines];
+        const clearedAt = Date.now();
+        this.pendingClear = null;
 
         // Remove cleared lines starting from bottom
         linesCleared.forEach(y => {
@@ -295,6 +341,10 @@ class Game {
         for (let i = 0; i < linesCleared.length; i++) {
             this.board.unshift(new Array(this.BOARD_WIDTH).fill(null));
         }
+
+        // Track cleared lines for flash effect after shipment leaves.
+        this.lastClearedLines = linesCleared;
+        this.lastClearedTime = clearedAt;
 
         // Award points based on Stacker bonus
         const pointsPerLine = {
@@ -309,16 +359,26 @@ class Game {
         this.linesCleared += linesCleared.length;
         this.currentLevelLines += linesCleared.length;
 
+        if (linesCleared.length === 1) {
+            this.contractStats.oneLineShipments += 1;
+        } else if (linesCleared.length === 2) {
+            this.contractStats.twoLineShipments += 1;
+        } else if (linesCleared.length === 3) {
+            this.contractStats.threeLineShipments += 1;
+        } else if (linesCleared.length === 4) {
+            this.contractStats.fullLoadShipments += 1;
+        }
+
         // Create line clear message
         let message = '';
         if (linesCleared.length === 1) {
-            message = '1 LINE CLEARED';
+            message = '1 LOG SHIPPED';
         } else if (linesCleared.length === 2) {
-            message = '2 LINES CLEARED';
+            message = '2 LOGS SHIPPED';
         } else if (linesCleared.length === 3) {
-            message = '3 LINES CLEARED';
+            message = '3 LOGS SHIPPED';
         } else if (linesCleared.length === 4) {
-            message = 'STACKER!';
+            message = 'FULL LOAD!';
         }
 
         this.lastClearMessage = {
@@ -326,14 +386,7 @@ class Game {
             linesCount: linesCleared.length,
             points: pointsAwarded
         };
-        this.lastClearMessageTime = Date.now();
-
-        // Play appropriate sound
-        if (linesCleared.length === 4) {
-            audioManager.playSoundStacker(); // Special sound for Stacker!
-        } else {
-            audioManager.playSoundLineClear();
-        }
+        this.lastClearMessageTime = clearedAt;
 
         // Increase level logic (progressive requirements)
         let leveledUp = false;
@@ -345,33 +398,66 @@ class Game {
             leveledUp = true;
         }
 
-        // Winning condition: reaching level 30 ends the run with a victory state.
-        if (leveledUp && this.level >= this.maxLevel) {
-            this.gameWon = true;
-            this.paused = true;
-            this.isDancing = false;
+        if (leveledUp) {
+            this.triggerContractSummary({
+                completedLevel: this.level - 1,
+                nextLevel: this.level,
+                reachedMaxLevel: this.level >= this.maxLevel,
+                ...this.contractStats
+            });
             return;
-        }
-
-        // Trigger dance cutscene every 5 levels passed
-        if (leveledUp && (this.level - 1) % 5 === 0) {
-            this.triggerDanceParty();
         }
     }
 
-    triggerDanceParty() {
-        this.isDancing = true;
-        if (this.onDanceStart) this.onDanceStart();
+    triggerContractSummary(summary) {
+        const totalBonus = (summary.twoLineShipments * 100) + (summary.threeLineShipments * 200) + (summary.fullLoadShipments * 1000);
+        this.score += totalBonus;
 
-        setTimeout(() => {
-            this.isDancing = false;
-            if (this.onDanceEnd) this.onDanceEnd();
-        }, 10000); // 10 seconds
+        this.isContractReview = true;
+        this.pendingVictory = Boolean(summary.reachedMaxLevel);
+        this.contractSummary = {
+            ...summary,
+            totalBonus,
+            totalShipments: summary.oneLineShipments + summary.twoLineShipments + summary.threeLineShipments + summary.fullLoadShipments
+        };
+
+        if (this.onContractSummaryStart) {
+            this.onContractSummaryStart(this.contractSummary);
+        }
+    }
+
+    resumeAfterContractSummary() {
+        const shouldWin = this.pendingVictory;
+        this.isContractReview = false;
+        this.pendingVictory = false;
+        this.contractSummary = null;
+        this.paused = false;
+        this.softDropActive = false;
+        this.isDropping = false;
+        this.contractStats = this.createEmptyContractStats();
+        this.lastDropTime = 0;
+
+        if (this.onContractSummaryEnd) {
+            this.onContractSummaryEnd();
+        }
+
+        if (shouldWin) {
+            this.gameWon = true;
+        }
+
+        return shouldWin;
     }
 
     // Main game loop
     update(currentTime) {
-        if (this.gameOver || this.paused || this.isDancing) return;
+        if (this.gameOver || this.paused || this.isContractReview) return;
+
+        if (this.pendingClear) {
+            if (Date.now() - this.pendingClear.startedAt >= this.pendingClear.duration) {
+                this.finalizePendingClear();
+            }
+            return;
+        }
 
         // Determine the effective drop interval
         const effectiveInterval = this.softDropActive ? this.dropInterval / 3 : this.dropInterval;
@@ -390,6 +476,7 @@ class Game {
 
     // Toggle pause
     togglePause() {
+        if (this.isContractReview) return;
         this.paused = !this.paused;
     }
 
@@ -404,7 +491,10 @@ class Game {
         this.linesCleared = 0;
         this.currentLevelLines = 0;
         this.linesToNextLevel = 10;
-        this.isDancing = false;
+        this.isContractReview = false;
+        this.pendingVictory = false;
+        this.contractSummary = null;
+        this.contractStats = this.createEmptyContractStats();
         this.gameOver = false;
         this.gameWon = false;
         this.paused = false;
@@ -417,6 +507,8 @@ class Game {
         this.lastPlacedTime = 0;
         this.lastClearedLines = [];
         this.lastClearedTime = 0;
+        this.lastShipment = null;
+        this.pendingClear = null;
         this.isDropping = false;
         this.lastClearMessage = null;
         this.lastClearMessageTime = 0;

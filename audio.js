@@ -64,6 +64,21 @@ class AudioManager {
         this.playBeep(500, 80, 0.15);
     }
 
+    // Sound for the intro handshake / contract moment.
+    playSoundHandshake() {
+        this.playBeep(520, 90, 0.12);
+        setTimeout(() => this.playBeep(660, 110, 0.12), 70);
+    }
+
+    // Sound for a shipment leaving the board.
+    playSoundShipment(linesCount = 1) {
+        const baseVolume = linesCount >= 3 ? 0.22 : 0.18;
+        const baseFrequency = linesCount >= 3 ? 320 : 420;
+        this.playBeep(baseFrequency, 100, baseVolume);
+        setTimeout(() => this.playBeep(baseFrequency + 120, 90, baseVolume * 0.95), 90);
+        setTimeout(() => this.playBeep(baseFrequency + 240, 120, baseVolume * 0.9), 180);
+    }
+
     // Toggle mute
     toggleMute() {
         this.isMuted = !this.isMuted;

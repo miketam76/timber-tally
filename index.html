@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forest Stacker</title>
+    <title>Timber Tally</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -27,18 +27,18 @@
 
             <div class="sidebar">
                 <div class="info-box">
-                    <div class="label">SCORE</div>
+                    <div class="label">EARNED</div>
                     <div id="score" class="score-value">0</div>
                 </div>
 
                 <div class="info-box">
-                    <div class="label">LEVEL</div>
+                    <div class="label">CONTRACT</div>
                     <div id="level" class="level-value">1</div>
                 </div>
 
                 <div class="info-box">
-                    <div class="label">LINES LEFT</div>
-                    <div id="linesLeft" class="score-value">10</div>
+                    <div class="label">LEFT</div>
+                    <div id="linesLeft" class="score-value">0</div>
                 </div>
 
                 <div class="info-box">
@@ -81,8 +81,10 @@
 
         <div id="startOverlay" class="overlay">
             <div class="overlay-content start-modal">
-                <h2>FOREST STACKER</h2>
-                <p>Clear lines. Aim For Stacker!</p>
+                <div class="start-title-block">
+                    <h1 class="game-title">TIMBER TALLY</h1>
+                    <p class="start-tagline">An Ottawa River timber run where every stack counts.</p>
+                </div>
 
                 <div class="music-selector custom-dropdown">
                     <button id="musicDropdownToggle" class="music-btn dropdown-toggle">🎵 SELECT MUSIC: 🌲 Woodland
@@ -110,7 +112,73 @@
                     <p>📱 Mobile D-pad: Hold ◀ ▶ to slide, hold ▼ for soft drop, ▲ rotates</p>
                     <p>📱 Mobile Buttons: A rotates, B hard drops, top ⏸ pauses</p>
                 </div>
-                <button id="startBtn" class="button button-large">START GAME</button>
+                <div class="start-actions">
+                    <button id="aboutBtn" class="button button-secondary">ABOUT</button>
+                    <button id="startBtn" class="button button-large">START SHIFT</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="aboutOverlay" class="overlay hidden">
+            <div class="overlay-content story-modal about-modal">
+                <h2 class="about-title">ABOUT TIMBER TALLY</h2>
+                <div class="intro-scene" aria-label="A Victorian businessman shaking hands with a beaver in a suit">
+                    <div class="intro-card intro-human-card">
+                        <div class="figure-label">Lumber Company</div>
+                        <div class="intro-figure intro-human-figure" aria-hidden="true">
+                            <div class="top-hat"></div>
+                            <div class="head"></div>
+                            <div class="collar"></div>
+                            <div class="torso"></div>
+                            <div class="vest"></div>
+                            <div class="button button-one"></div>
+                            <div class="button button-two"></div>
+                            <div class="button button-three"></div>
+                            <div class="arm arm-left"></div>
+                            <div class="arm arm-right"></div>
+                        </div>
+                    </div>
+
+                    <div class="intro-handshake" aria-hidden="true">
+                        <div class="handshake-ring"></div>
+                        <div class="handshake-arm handshake-arm-left"></div>
+                        <div class="handshake-arm handshake-arm-right"></div>
+                        <div class="handshake-cuff handshake-cuff-left"></div>
+                        <div class="handshake-cuff handshake-cuff-right"></div>
+                        <div class="handshake-hand handshake-hand-left"></div>
+                        <div class="handshake-hand handshake-hand-right"></div>
+                        <div class="handshake-clasp"></div>
+                        <div class="handshake-spark handshake-spark-one"></div>
+                        <div class="handshake-spark handshake-spark-two"></div>
+                    </div>
+
+                    <div class="intro-card intro-beaver-card">
+                        <div class="figure-label">Timber Tally</div>
+                        <div class="intro-figure intro-beaver-figure" aria-hidden="true">
+                            <div class="ear ear-left"></div>
+                            <div class="ear ear-right"></div>
+                            <div class="head"></div>
+                            <div class="muzzle"></div>
+                            <div class="whisker whisker-left"></div>
+                            <div class="whisker whisker-right"></div>
+                            <div class="torso"></div>
+                            <div class="tie"></div>
+                            <div class="vest-buttons"></div>
+                            <div class="tail"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-copy">
+                    <p>Timber Tally is an alternate-history lumber trade story set in the late 1800s, where humans and
+                        highly intelligent beavers run the river timber economy together. The opening handshake marks
+                        the Great Log Accord, a business deal that links beaver timber supply with human industry and
+                        technology.</p>
+                    <p>You play a beaver fulfillment specialist managing logs as they float down the river. The goal is
+                        not just to clear lines, but to complete orders, keep the ledger moving, and ship perfect stacks
+                        off to human cities by wagon or steamboat. As contracts grow, the work gets bigger and the
+                        stakes rise, from cabins to railroads and Victorian megaprojects.</p>
+                </div>
+                <button id="aboutCloseBtn" class="button button-large">CLOSE</button>
             </div>
         </div>
 
@@ -118,7 +186,7 @@
             <div class="overlay-content">
                 <h2>GAME OVER</h2>
                 <div class="final-score">
-                    <div class="label">FINAL SCORE</div>
+                    <div class="label">FINAL EARNINGS</div>
                     <div id="finalScore" class="score-value">0</div>
                 </div>
                 <div class="button-group">
@@ -134,15 +202,15 @@
 
         <div id="gameWinOverlay" class="overlay hidden">
             <div class="overlay-content win-modal">
-                <h2>CONGRATULATIONS!</h2>
-                <p class="win-subtitle">You finished Forest Stacker at Level 30.</p>
+                <h2>CONTRACT COMPLETE!</h2>
+                <p class="win-subtitle">You finished Timber Tally at Level 30.</p>
                 <div class="final-score">
-                    <div class="label">FINAL SCORE</div>
+                    <div class="label">FINAL EARNINGS</div>
                     <div id="winFinalScore" class="score-value">0</div>
                 </div>
                 <div class="credits-box">
                     <h3>CREDITS</h3>
-                    <p>Created by the Forest Stacker project creators.</p>
+                    <p>Created by the Timber Tally project creators.</p>
                     <p>Built with HTML, CSS, and JavaScript.</p>
                 </div>
                 <div class="button-group">
@@ -152,17 +220,37 @@
             </div>
         </div>
 
-        <div id="danceOverlay" class="overlay hidden">
-            <div class="overlay-content dance-modal">
-                <h2 id="danceTitle" class="dance-title">LEVEL PASSED!</h2>
-                <div class="dancers">
-                    <span class="dancer">🧔‍♂️</span>
-                    <span class="dancer">🪓</span>
-                    <span class="dancer">🌲</span>
-                    <span class="dancer">🪓</span>
-                    <span class="dancer">🧔‍♂️</span>
+        <div id="contractOverlay" class="overlay hidden">
+            <div class="overlay-content contract-modal">
+                <h2 id="contractTitle" class="contract-title">CONTRACT COMPLETED</h2>
+                <p id="contractSubtitle" class="contract-subtitle">Summary of this shipment run.</p>
+                <div class="contract-breakdown">
+                    <div class="contract-row">
+                        <span class="contract-label">1-shipment logs</span>
+                        <span id="contractOneCount" class="contract-value">0</span>
+                        <span class="contract-formula">no bonus</span>
+                    </div>
+                    <div class="contract-row">
+                        <span class="contract-label">2-shipment logs</span>
+                        <span id="contractTwoCount" class="contract-value">0</span>
+                        <span id="contractTwoBonus" class="contract-formula">x 100 = $0</span>
+                    </div>
+                    <div class="contract-row">
+                        <span class="contract-label">3-shipment logs</span>
+                        <span id="contractThreeCount" class="contract-value">0</span>
+                        <span id="contractThreeBonus" class="contract-formula">x 200 = $0</span>
+                    </div>
+                    <div class="contract-row">
+                        <span class="contract-label">4-shipment logs</span>
+                        <span id="contractFourCount" class="contract-value">0</span>
+                        <span id="contractFourBonus" class="contract-formula">x 1000 = $0</span>
+                    </div>
+                    <div class="contract-total">
+                        <span class="contract-label">Contract bonus</span>
+                        <span id="contractTotalBonus" class="contract-total-value">$0</span>
+                    </div>
                 </div>
-                <div class="dance-countdown">10</div>
+                <button id="contractOkBtn" class="button button-large">OK</button>
             </div>
         </div>
     </div>
