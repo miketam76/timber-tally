@@ -108,15 +108,15 @@ class GameUI {
             if (this.contractSubtitle) {
                 this.contractSubtitle.textContent = summary.reachedMaxLevel
                     ? 'This was the final contract. Click OK to finish the run.'
-                    : `Review the shipment bonuses before continuing to Contract ${summary.nextLevel}.`;
+                    : `Review instant shipment premiums before continuing to Contract ${summary.nextLevel}.`;
             }
             if (this.contractOneCount) this.contractOneCount.textContent = summary.oneLineShipments;
             if (this.contractTwoCount) this.contractTwoCount.textContent = summary.twoLineShipments;
             if (this.contractThreeCount) this.contractThreeCount.textContent = summary.threeLineShipments;
             if (this.contractFourCount) this.contractFourCount.textContent = summary.fullLoadShipments;
-            if (this.contractTwoBonus) this.contractTwoBonus.textContent = `x 100 = ${this.formatCurrency(summary.twoLineShipments * 100)}`;
-            if (this.contractThreeBonus) this.contractThreeBonus.textContent = `x 200 = ${this.formatCurrency(summary.threeLineShipments * 200)}`;
-            if (this.contractFourBonus) this.contractFourBonus.textContent = `x 1000 = ${this.formatCurrency(summary.fullLoadShipments * 1000)}`;
+            if (this.contractTwoBonus) this.contractTwoBonus.textContent = `x 500 instant (${this.formatCurrency(summary.twoLineShipments * 500)}) - Efficiency tip`;
+            if (this.contractThreeBonus) this.contractThreeBonus.textContent = `x 1500 instant (${this.formatCurrency(summary.threeLineShipments * 1500)}) - Foreman's Notice`;
+            if (this.contractFourBonus) this.contractFourBonus.textContent = `x 5000 instant (${this.formatCurrency(summary.fullLoadShipments * 5000)}) - Legend of the Woods`;
             if (this.contractTotalBonus) this.contractTotalBonus.textContent = this.formatCurrency(summary.totalBonus);
 
             this.contractOverlay.classList.remove('hidden');
@@ -688,7 +688,7 @@ class GameUI {
             item.className = 'leaderboard-item';
             item.innerHTML = `
                 <span class="leaderboard-rank">#${index + 1}</span>
-                <span class="leaderboard-name">Contract ${entry.level || 1}</span>
+                <span class="leaderboard-name">Earner ${index + 1} - Contract ${entry.level || 1}</span>
                 <span class="leaderboard-score">${this.formatCurrency(entry.score || 0)}</span>
             `;
             this.gameOverLeaderboardList.appendChild(item);
@@ -696,7 +696,11 @@ class GameUI {
     }
 
     formatCurrency(value) {
-        return `$${Math.max(0, value).toLocaleString('en-US')}`;
+        const dollars = Math.max(0, value) / 100;
+        return `$${dollars.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })}`;
     }
 
     // Render game board
@@ -999,11 +1003,11 @@ class GameUI {
 
         this.ctx.fillText(message.text, centerX, centerY - 10);
 
-        // Points display
+        // Earnings display (period wage value) with raw points retained for clarity.
         this.ctx.font = `bold 16px Arial`;
         this.ctx.fillStyle = message.linesCount === 4 ? '#ffff00' : '#00ff00';
         this.ctx.shadowBlur = 5;
-        this.ctx.fillText(`+ ${message.points} PTS`, centerX, centerY + 15);
+        this.ctx.fillText(`+ ${this.formatCurrency(message.points)} (${message.points} pts)`, centerX, centerY + 15);
 
         this.ctx.restore();
     }

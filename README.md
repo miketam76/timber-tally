@@ -43,12 +43,26 @@ At the start screen, choose your music, review the controls, or open About to se
 
 ### Scoring
 
-| Lines Cleared | Points |
-|---|---|
-| 1 Line | base shipment |
-| 2 Lines | 100 bonus |
-| 3 Lines | 200 bonus |
-| 4 Lines (Full Load) | 1000 bonus |
+Base line-clear points stay the same internally. Earnings are presented as period wages at `$0.01` per point:
+
+| Lines Cleared | Points (Base) | 1880s Wage Value | Historical Context |
+|---|---:|---:|---|
+| 1 Line | 40 | $0.40 | About 1/3 of a full day's pay. |
+| 2 Lines | 100 | $1.00 | A solid standard day's wage. |
+| 3 Lines | 300 | $3.00 | A full day's pay for a highly skilled foreman. |
+| 4 Lines (Full Load) | 1200 | $12.00 | A full week's wages in one move. |
+
+Contract bonuses are also converted using the same rate so all in-game earnings remain consistent with the period economy theme.
+
+#### Instant Shipment Premiums
+
+These are paid instantly when the clear happens:
+
+| Clear Type | Premium (Points) | Wage Value | Flavor |
+|---|---:|---:|---|
+| 2-Line Clear | 500 | $5.00 | Efficiency tip |
+| 3-Line Clear | 1500 | $15.00 | Foreman's Notice |
+| Timber! (4 Lines) | 5000 | $50.00 | Legend of the Woods status |
 
 ### Game Rules
 

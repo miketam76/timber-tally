@@ -355,7 +355,17 @@ class Game {
         };
 
         const pointsAwarded = pointsPerLine[linesCleared.length] || 0;
-        this.score += pointsAwarded;
+
+        // Instant premium payouts for efficient multi-line shipments.
+        const instantBonusByLines = {
+            2: 500,
+            3: 1500,
+            4: 5000
+        };
+        const instantBonusAwarded = instantBonusByLines[linesCleared.length] || 0;
+        const totalAwarded = pointsAwarded + instantBonusAwarded;
+
+        this.score += totalAwarded;
         this.linesCleared += linesCleared.length;
         this.currentLevelLines += linesCleared.length;
 
@@ -371,20 +381,26 @@ class Game {
 
         // Create line clear message
         let message = '';
+        let bonusStatus = '';
         if (linesCleared.length === 1) {
             message = '1 LOG SHIPPED';
         } else if (linesCleared.length === 2) {
             message = '2 LOGS SHIPPED';
+            bonusStatus = 'Efficiency tip';
         } else if (linesCleared.length === 3) {
             message = '3 LOGS SHIPPED';
+            bonusStatus = "Foreman's Notice";
         } else if (linesCleared.length === 4) {
-            message = 'FULL LOAD!';
+            message = 'TIMBER!';
+            bonusStatus = 'Legend of the Woods';
         }
 
         this.lastClearMessage = {
             text: message,
             linesCount: linesCleared.length,
-            points: pointsAwarded
+            points: totalAwarded,
+            bonusPoints: instantBonusAwarded,
+            bonusStatus
         };
         this.lastClearMessageTime = clearedAt;
 
@@ -410,8 +426,7 @@ class Game {
     }
 
     triggerContractSummary(summary) {
-        const totalBonus = (summary.twoLineShipments * 100) + (summary.threeLineShipments * 200) + (summary.fullLoadShipments * 1000);
-        this.score += totalBonus;
+        const totalBonus = (summary.twoLineShipments * 500) + (summary.threeLineShipments * 1500) + (summary.fullLoadShipments * 5000);
 
         this.isContractReview = true;
         this.pendingVictory = Boolean(summary.reachedMaxLevel);
