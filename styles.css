@@ -95,7 +95,7 @@ body::after {
 }
 
 .game-over-leaderboard h3 {
-    color: #00ff00;
+    color: #f0d5a8;
     margin-bottom: 8px;
     text-align: center;
     font-size: 1.1rem;
@@ -1221,6 +1221,8 @@ body::after {
     grid-template-columns: 1.4fr auto auto;
     gap: 10px;
     align-items: center;
+    justify-items: start;
+    text-align: left;
     padding: 12px 14px;
     border-radius: 8px;
     background: rgba(199, 155, 108, 0.09);
@@ -1238,6 +1240,7 @@ body::after {
     color: #f4e3c4;
     font-weight: bold;
     letter-spacing: 0.02em;
+    text-align: left;
 }
 
 .contract-value,
@@ -1257,12 +1260,14 @@ body::after {
     min-width: 48px;
     text-align: left;
     justify-self: start;
+    display: block;
     font-variant-numeric: tabular-nums;
 }
 
 .contract-row .contract-formula {
     text-align: left;
     justify-self: start;
+    display: block;
     white-space: normal;
     overflow-wrap: anywhere;
     font-variant-numeric: tabular-nums;
@@ -1737,12 +1742,16 @@ body::after {
         grid-template-columns: minmax(0, 1fr);
         gap: 4px;
         align-items: start;
+        justify-items: start;
+        text-align: left;
         padding: 10px 10px;
     }
 
     .contract-row .contract-label {
         font-size: 0.84rem;
         line-height: 1.3;
+        text-align: left;
+        justify-self: start;
     }
 
     .contract-row .contract-value {

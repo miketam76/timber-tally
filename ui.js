@@ -658,7 +658,10 @@ class GameUI {
         }
 
         if (this.gameStarted && !game.paused && !game.gameOver) {
-            musicManager.resumeMusic();
+            const selectedTheme = Object.entries(this.musicButtons)
+                .find(([_, btn]) => btn.classList.contains('active'))?.[0] || musicManager.currentTheme || 'woodland';
+            musicManager.stopAll();
+            musicManager.playTheme(selectedTheme);
         }
 
         this.updateMobileControlsVisibility();
