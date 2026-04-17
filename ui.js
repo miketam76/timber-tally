@@ -114,9 +114,9 @@ class GameUI {
             if (this.contractTwoCount) this.contractTwoCount.textContent = summary.twoLineShipments;
             if (this.contractThreeCount) this.contractThreeCount.textContent = summary.threeLineShipments;
             if (this.contractFourCount) this.contractFourCount.textContent = summary.fullLoadShipments;
-            if (this.contractTwoBonus) this.contractTwoBonus.textContent = `x 500 instant (${this.formatCurrency(summary.twoLineShipments * 500)}) - Efficiency tip`;
-            if (this.contractThreeBonus) this.contractThreeBonus.textContent = `x 1500 instant (${this.formatCurrency(summary.threeLineShipments * 1500)}) - Foreman's Notice`;
-            if (this.contractFourBonus) this.contractFourBonus.textContent = `x 5000 instant (${this.formatCurrency(summary.fullLoadShipments * 5000)}) - Legend of the Woods`;
+            if (this.contractTwoBonus) this.contractTwoBonus.textContent = `${summary.twoLineShipments} x ${this.formatCurrency(500)} = ${this.formatCurrency(summary.twoLineShipments * 500)}`;
+            if (this.contractThreeBonus) this.contractThreeBonus.textContent = `${summary.threeLineShipments} x ${this.formatCurrency(1500)} = ${this.formatCurrency(summary.threeLineShipments * 1500)}`;
+            if (this.contractFourBonus) this.contractFourBonus.textContent = `${summary.fullLoadShipments} x ${this.formatCurrency(5000)} = ${this.formatCurrency(summary.fullLoadShipments * 5000)}`;
             if (this.contractTotalBonus) this.contractTotalBonus.textContent = this.formatCurrency(summary.totalBonus);
 
             this.contractOverlay.classList.remove('hidden');
