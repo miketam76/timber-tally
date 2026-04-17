@@ -99,6 +99,9 @@ class GameUI {
         game.onContractSummaryStart = (summary) => {
             if (!this.contractOverlay) return;
 
+            // Pause background music while contract summary is shown.
+            musicManager.pauseMusic();
+
             if (this.contractTitle) {
                 this.contractTitle.textContent = `Contract ${summary.completedLevel} completed`;
             }
@@ -117,6 +120,7 @@ class GameUI {
             if (this.contractTotalBonus) this.contractTotalBonus.textContent = this.formatCurrency(summary.totalBonus);
 
             this.contractOverlay.classList.remove('hidden');
+            this.updateMobileControlsVisibility();
         };
 
         game.onContractSummaryEnd = () => {
@@ -443,6 +447,8 @@ class GameUI {
 
     // Toggle pause state
     togglePause() {
+        if (game.isContractReview) return;
+
         game.togglePause();
         if (game.paused) {
             this.pauseBtn.textContent = '▶️';
@@ -648,7 +654,14 @@ class GameUI {
 
         if (shouldShowWin) {
             this.showGameWon();
+            return;
         }
+
+        if (this.gameStarted && !game.paused && !game.gameOver) {
+            musicManager.resumeMusic();
+        }
+
+        this.updateMobileControlsVisibility();
     }
 
     resetInputState() {
