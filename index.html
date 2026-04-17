@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest Stacker</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- <div class="header"> -->
+        <!-- <h1>FOREST STACKER</h1> -->
+        <!-- <div class="header-buttons">
+                <button id="muteBtn" class="button" title="Mute/Unmute">🔊</button>
+                <button id="pauseBtn" class="button">PAUSE</button>
+                <button id="endGameBtn" class="button" title="End Game">END GAME</button>
+            </div> -->
+        <!-- </div> -->
+
+        <div class="game-wrapper">
+            <div class="main-content">
+                <canvas id="gameCanvas" width="300" height="600"></canvas>
+            </div>
+
+            <div class="sidebar">
+                <div class="info-box">
+                    <div class="label">SCORE</div>
+                    <div id="score" class="score-value">0</div>
+                </div>
+
+                <div class="info-box">
+                    <div class="label">LEVEL</div>
+                    <div id="level" class="level-value">1</div>
+                </div>
+
+                <div class="info-box">
+                    <div class="label">LINES LEFT</div>
+                    <div id="linesLeft" class="score-value">10</div>
+                </div>
+
+                <div class="info-box">
+                    <div class="label">NEXT</div>
+                    <canvas id="nextPieceCanvas" width="120" height="120" class="next-piece-canvas"></canvas>
+                </div>
+
+                <div class="icon-buttons-row">
+                    <div class="music-selector icon-dropdown in-game-music">
+                        <button id="inGameMusicToggle" class="button icon-btn" title="Music">🎵</button>
+                        <div id="inGameMusicOptions" class="music-options hidden icon-dropdown-menu">
+                            <button id="inGameWoodland" class="music-btn active" data-theme="woodland">🌲
+                                Woodland</button>
+                            <button id="inGameZen" class="music-btn" data-theme="zen">🧘 Zen</button>
+                            <button id="inGameCeltic" class="music-btn" data-theme="celtic">🎻 Celtic</button>
+                        </div>
+                    </div>
+                    <button id="muteBtn" class="button icon-btn" title="Mute/Unmute">🔊</button>
+                    <button id="pauseBtn" class="button icon-btn" title="Pause Game">⏸️</button>
+                    <button id="endGameBtn" class="button icon-btn" title="End Game">⏹️</button>
+                </div>
+            </div>
+
+            <div id="mobileGamepad" class="mobile-gamepad" aria-label="Mobile game controls">
+                <div class="dpad" aria-label="Directional pad">
+                    <button id="dpadUp" class="button dpad-btn" title="Rotate">▲</button>
+                    <button id="dpadLeft" class="button dpad-btn" title="Move Left">◀</button>
+                    <button id="dpadDown" class="button dpad-btn" title="Soft Drop">▼</button>
+                    <button id="dpadRight" class="button dpad-btn" title="Move Right">▶</button>
+                </div>
+                <div class="action-buttons" aria-label="Action buttons">
+                    <button id="btnPauseMobile" class="button action-btn action-pause-btn" title="Pause">⏸</button>
+                    <div class="action-buttons-row">
+                        <button id="btnB" class="button action-btn" title="Hard Drop">B</button>
+                        <button id="btnA" class="button action-btn" title="Rotate">A</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="startOverlay" class="overlay">
+            <div class="overlay-content start-modal">
+                <h2>FOREST STACKER</h2>
+                <p>Clear lines. Aim For Stacker!</p>
+
+                <div class="music-selector custom-dropdown">
+                    <button id="musicDropdownToggle" class="music-btn dropdown-toggle">🎵 SELECT MUSIC: 🌲 Woodland
+                        ▾</button>
+                    <div id="musicDropdownOptions" class="music-options hidden">
+                        <button id="musicWoodland" class="music-btn active" data-theme="woodland">
+                            🌲 Woodland
+                        </button>
+                        <button id="musicZen" class="music-btn" data-theme="zen">
+                            🧘 Zen
+                        </button>
+                        <button id="musicCeltic" class="music-btn" data-theme="celtic">
+                            🎻 Celtic
+                        </button>
+                    </div>
+                </div>
+
+                <div class="controls-info">
+                    <h3>CONTROLS</h3>
+                    <p>⌨️ Arrow Keys / WASD - Move</p>
+                    <p>⌨️ Up / X - Rotate</p>
+                    <p>⌨️ Down / S - Soft Drop</p>
+                    <p>⌨️ Space - Hard Drop</p>
+                    <p>⌨️ P - Pause</p>
+                    <p>📱 Mobile D-pad: Hold ◀ ▶ to slide, hold ▼ for soft drop, ▲ rotates</p>
+                    <p>📱 Mobile Buttons: A rotates, B hard drops, top ⏸ pauses</p>
+                </div>
+                <button id="startBtn" class="button button-large">START GAME</button>
+            </div>
+        </div>
+
+        <div id="gameOverOverlay" class="overlay hidden">
+            <div class="overlay-content">
+                <h2>GAME OVER</h2>
+                <div class="final-score">
+                    <div class="label">FINAL SCORE</div>
+                    <div id="finalScore" class="score-value">0</div>
+                </div>
+                <div class="button-group">
+                    <button id="restartBtn" class="button">PLAY AGAIN</button>
+                    <button id="mainMenuBtn" class="button">MAIN MENU</button>
+                </div>
+                <div class="game-over-leaderboard">
+                    <h3>HIGH SCORES</h3>
+                    <div id="gameOverLeaderboardList" class="leaderboard-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="gameWinOverlay" class="overlay hidden">
+            <div class="overlay-content win-modal">
+                <h2>CONGRATULATIONS!</h2>
+                <p class="win-subtitle">You finished Forest Stacker at Level 30.</p>
+                <div class="final-score">
+                    <div class="label">FINAL SCORE</div>
+                    <div id="winFinalScore" class="score-value">0</div>
+                </div>
+                <div class="credits-box">
+                    <h3>CREDITS</h3>
+                    <p>Created by the Forest Stacker project creators.</p>
+                    <p>Built with HTML, CSS, and JavaScript.</p>
+                </div>
+                <div class="button-group">
+                    <button id="winRestartBtn" class="button">PLAY AGAIN</button>
+                    <button id="winMainMenuBtn" class="button">MAIN MENU</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="danceOverlay" class="overlay hidden">
+            <div class="overlay-content dance-modal">
+                <h2 id="danceTitle" class="dance-title">LEVEL PASSED!</h2>
+                <div class="dancers">
+                    <span class="dancer">🧔‍♂️</span>
+                    <span class="dancer">🪓</span>
+                    <span class="dancer">🌲</span>
+                    <span class="dancer">🪓</span>
+                    <span class="dancer">🧔‍♂️</span>
+                </div>
+                <div class="dance-countdown">10</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="storage.js"></script>
+    <script src="audio.js"></script>
+    <script src="music.js"></script>
+    <script src="game.js"></script>
+    <script src="ui.js"></script>
+</body>
+
+</html>

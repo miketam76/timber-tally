@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Tree favicon">
+  <rect width="64" height="64" rx="12" fill="#eaf6ea"/>
+  <polygon points="32,8 52,34 12,34" fill="#2e7d32"/>
+  <polygon points="32,18 48,40 16,40" fill="#388e3c"/>
+  <rect x="27" y="40" width="10" height="16" rx="2" fill="#7b4a2a"/>
+</svg>
