@@ -1341,8 +1341,24 @@ body::after {
 /* Responsive Design */
 @media (max-width: 600px) {
     body {
+        min-height: 100dvh;
+        align-items: flex-start;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
         padding: 10px;
         padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .container {
+        width: 100%;
+    }
+
+    .overlay {
+        align-items: flex-start;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 10px 0 calc(10px + env(safe-area-inset-bottom, 0px));
     }
 
     .header h1 {
@@ -1401,6 +1417,119 @@ body::after {
     .overlay-content {
         padding: 15px;
         margin: 15px;
+    }
+
+    .about-modal {
+        width: min(96vw, 860px);
+    }
+
+    .intro-scene {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 14px;
+        justify-items: center;
+        overflow: visible;
+    }
+
+    .intro-card {
+        width: 100%;
+        max-width: 210px;
+        min-height: 146px;
+        padding: 16px 12px 8px;
+    }
+
+    .intro-figure {
+        transform: scale(0.78);
+        transform-origin: center bottom;
+    }
+
+    .intro-handshake {
+        width: 76px;
+        height: 76px;
+        margin: 4px 0;
+    }
+
+    .handshake-ring {
+        inset: 8px;
+    }
+
+    .handshake-arm {
+        width: 32px;
+        height: 10px;
+        margin-top: -6px;
+    }
+
+    .handshake-arm-left {
+        left: 8px;
+    }
+
+    .handshake-arm-right {
+        right: 8px;
+    }
+
+    .handshake-cuff {
+        width: 16px;
+        height: 14px;
+        margin-top: -8px;
+    }
+
+    .handshake-cuff-left {
+        left: 4px;
+    }
+
+    .handshake-cuff-right {
+        right: 4px;
+    }
+
+    .handshake-hand {
+        width: 20px;
+        height: 14px;
+        margin-top: -8px;
+    }
+
+    .handshake-hand-left {
+        left: 20px;
+    }
+
+    .handshake-hand-right {
+        right: 20px;
+    }
+
+    .handshake-clasp {
+        width: 26px;
+        height: 14px;
+        margin-left: -13px;
+        margin-top: -8px;
+    }
+
+    .handshake-spark {
+        width: 6px;
+        height: 6px;
+    }
+
+    .handshake-spark-one {
+        top: 17px;
+        right: 19px;
+    }
+
+    .handshake-spark-two {
+        bottom: 15px;
+        left: 20px;
+    }
+
+    .intro-scene::before,
+    .intro-scene::after {
+        inset: 8px;
+    }
+
+    .figure-label {
+        font-size: 0.64rem;
+        letter-spacing: 0.14em;
+    }
+
+    .about-copy {
+        font-size: 0.92rem;
+        line-height: 1.55;
     }
 
     #gameCanvas {
