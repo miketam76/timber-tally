@@ -6,7 +6,7 @@ Inspired by Tetris. Tetris is a registered trademark of The Tetris Company, and 
 # Story
 Timber Tally is an alternate-history lumber trade story set in the late 1800s, where humans and highly intelligent beavers run the river timber economy together. The opening handshake marks the Great Log Accord, a business deal that links beaver timber supply with human industry and technology.
 
-You play a beaver fulfillment specialist managing logs as they float down the river. The goal is not just to clear lines, but to complete orders, keep the ledger moving, and ship perfect stacks off to human cities by wagon or steamboat. As contracts grow, the work gets bigger and the stakes rise, from cabins to railroads and Victorian megaprojects.
+You play a beaver named Chuck, a fulfillment specialist managing logs as they float down the river. The goal is not just to clear lines, but to complete orders, keep the ledger moving, and ship perfect stacks off to human cities by wagon or steamboat. As contracts grow, the work gets bigger and the stakes rise, from cabins to railroads and Victorian megaprojects.
 
 ## Features
 - 🦫 **Alternate-History Story** - A river trade partnership between humans and beavers
