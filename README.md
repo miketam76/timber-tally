@@ -116,9 +116,9 @@ The game includes a **procedurally generated music system** with 3 selectable th
 
 ### 🎵 Music Themes
 
-- **🌲 Woodland** - Cheerful river-country melody
-- **🧘 Zen** - Calm, meditative theme
-- **🎻 Celtic** - Upbeat, energetic folk tune
+- **🎹 Morning Whistle** - Early-morning ragtime-inspired melody
+- **🎻 River Driver Jig** - Energetic logging folk rhythm
+- **⚙️ Sawmill Scramble** - Fast stride-piano industrial drive
 
 Music speeds up dynamically with difficulty levels (up to 1.5x speed) for extra intensity!
 
@@ -135,12 +135,12 @@ The music system generates authentic 8-bit chiptune melodies using:
 Want to modify the music? Edit the melody sequences in `music.js`:
 
 ```javascript
-// Woodland theme melody (in music.js):
-woodlandMelody() {
+// Morning Whistle melody (in music.js):
+morningWhistleMelody() {
     return [
-        { pitch: 'E4', duration: 1, volume: 0.15 },
-        { pitch: 'G4', duration: 1, volume: 0.15 },
-        { pitch: 'E5', duration: 2, volume: 0.12 },
+        { pitch: 'C4', duration: 1, volume: 0.18 },
+        { pitch: 'E4', duration: 0.5, volume: 0.15 },
+        { pitch: 'G4', duration: 0.5, volume: 0.18 },
         // ... more notes
     ];
 }

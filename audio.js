@@ -1,4 +1,4 @@
-// Audio.js - Sound effects using Web Audio API
+// audio.js - 1800s Timber Tally Sound Effects
 
 class AudioManager {
     constructor() {
@@ -6,80 +6,99 @@ class AudioManager {
         this.isMuted = false;
     }
 
-    // Play a simple beep sound
-    playBeep(frequency = 800, duration = 100, volume = 0.3) {
+    // UPDATED: A "Pluck/Mechanical" sound instead of a "Sine" beep
+    playEffect(frequency, duration, type = 'triangle', volume = 0.2) {
         if (this.isMuted) return;
 
         try {
-            const oscillator = this.audioContext.createOscillator();
-            const gainNode = this.audioContext.createGain();
+            const osc = this.audioContext.createOscillator();
+            const gain = this.audioContext.createGain();
 
-            oscillator.connect(gainNode);
-            gainNode.connect(this.audioContext.destination);
+            osc.type = type; // Triangle is "thumpier" and more organic than Sine
+            osc.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
 
-            oscillator.frequency.value = frequency;
-            oscillator.type = 'sine';
+            const now = this.audioContext.currentTime;
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(volume, now + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration / 1000);
 
-            gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration / 1000);
+            osc.connect(gain);
+            gain.connect(this.audioContext.destination);
 
-            oscillator.start(this.audioContext.currentTime);
-            oscillator.stop(this.audioContext.currentTime + duration / 1000);
-        } catch (e) {
-            // Audio context errors are silently ignored
+            osc.start(now);
+            osc.stop(now + duration / 1000);
+        } catch (e) { }
+    }
+
+    // Movement: Sounds like a wooden gear click
+    playSoundMove() {
+        this.playEffect(150, 40, 'square', 0.05);
+    }
+
+    // Rotation: A slightly higher mechanical click
+    playSoundRotate() {
+        this.playEffect(300, 40, 'square', 0.05);
+    }
+
+    // Lock: The heavy "thud" of a log hitting the pile
+    playSoundLock() {
+        this.playEffect(100, 150, 'triangle', 0.3);
+    }
+
+    // Line Clear: The "Shimmer" of a saw blade
+    playSoundLineClear() {
+        this.playEffect(800, 200, 'sawtooth', 0.15);
+        setTimeout(() => this.playEffect(1200, 150, 'sawtooth', 0.1), 50);
+    }
+
+    // Stacker (4 lines): The "Timber!" moment
+    playSoundStacker() {
+        // Ascending slide like a celebratory whistle
+        let f = 400;
+        for (let i = 0; i < 4; i++) {
+            setTimeout(() => this.playEffect(f + (i * 200), 150, 'sawtooth', 0.2), i * 100);
         }
     }
 
-    // Sound for piece movement (low beep)
-    playSoundMove() {
-        this.playBeep(400, 50, 0.1);
-    }
-
-    // Sound for piece locked/placed
-    playSoundLock() {
-        this.playBeep(600, 150, 0.2);
-    }
-
-    // Sound for line clear (higher pitch)
-    playSoundLineClear() {
-        this.playBeep(1000, 200, 0.3);
-    }
-
-    // Sound for Stacker (4-line clear - special!)
-    playSoundStacker() {
-        // Play ascending notes for Stacker
-        this.playBeep(800, 100, 0.3);
-        setTimeout(() => this.playBeep(1000, 100, 0.3), 120);
-        setTimeout(() => this.playBeep(1200, 100, 0.3), 240);
-        setTimeout(() => this.playBeep(1400, 200, 0.3), 360);
-    }
-
-    // Sound for game over
+    // Game Over: Steam whistle powering down
     playSoundGameOver() {
-        this.playBeep(300, 300, 0.3);
+        if (this.isMuted) return;
+
+        try {
+            const now = this.audioContext.currentTime;
+            const osc = this.audioContext.createOscillator();
+            const gain = this.audioContext.createGain();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(400, now);
+            // Frequency slides down (the "power down" effect)
+            osc.frequency.exponentialRampToValueAtTime(100, now + 1.0);
+
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.linearRampToValueAtTime(0, now + 1.0);
+
+            osc.connect(gain);
+            gain.connect(this.audioContext.destination);
+            osc.start();
+            osc.stop(now + 1.0);
+        } catch (e) { }
     }
 
-    // Sound for rotation
-    playSoundRotate() {
-        this.playBeep(500, 80, 0.15);
-    }
-
-    // Sound for the intro handshake / contract moment.
+    // Intro contract handshake: two short wooden/chime taps.
     playSoundHandshake() {
-        this.playBeep(520, 90, 0.12);
-        setTimeout(() => this.playBeep(660, 110, 0.12), 70);
+        this.playEffect(360, 70, 'triangle', 0.1);
+        setTimeout(() => this.playEffect(520, 85, 'triangle', 0.1), 65);
     }
 
-    // Sound for a shipment leaving the board.
+    // Shipment departure cue with stronger tone for larger clears.
     playSoundShipment(linesCount = 1) {
-        const baseVolume = linesCount >= 3 ? 0.22 : 0.18;
-        const baseFrequency = linesCount >= 3 ? 320 : 420;
-        this.playBeep(baseFrequency, 100, baseVolume);
-        setTimeout(() => this.playBeep(baseFrequency + 120, 90, baseVolume * 0.95), 90);
-        setTimeout(() => this.playBeep(baseFrequency + 240, 120, baseVolume * 0.9), 180);
+        const baseFrequency = linesCount >= 3 ? 220 : 280;
+        const baseVolume = linesCount >= 3 ? 0.16 : 0.12;
+        this.playEffect(baseFrequency, 90, 'sawtooth', baseVolume);
+        setTimeout(() => this.playEffect(baseFrequency + 140, 95, 'triangle', baseVolume * 0.9), 85);
+        setTimeout(() => this.playEffect(baseFrequency + 260, 120, 'triangle', baseVolume * 0.85), 175);
     }
 
-    // Toggle mute
     toggleMute() {
         this.isMuted = !this.isMuted;
         return this.isMuted;

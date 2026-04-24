@@ -42,10 +42,11 @@
                     <div class="music-selector icon-dropdown in-game-music">
                         <button id="inGameMusicToggle" class="button icon-btn" title="Music">🎵</button>
                         <div id="inGameMusicOptions" class="music-options hidden icon-dropdown-menu">
-                            <button id="inGameWoodland" class="music-btn active" data-theme="woodland">🌲
-                                Woodland</button>
-                            <button id="inGameZen" class="music-btn" data-theme="zen">🧘 Zen</button>
-                            <button id="inGameCeltic" class="music-btn" data-theme="celtic">🎻 Celtic</button>
+                            <button id="inGameWoodland" class="music-btn active" data-theme="morningWhistle">🎹
+                                Morning Whistle</button>
+                            <button id="inGameZen" class="music-btn" data-theme="riverJig">🎻 River Driver Jig</button>
+                            <button id="inGameCeltic" class="music-btn" data-theme="sawmillScramble">⚙️ Sawmill
+                                Scramble</button>
                         </div>
                     </div>
                     <button id="muteBtn" class="button icon-btn" title="Mute/Unmute">🔊</button>
@@ -79,17 +80,18 @@
                 </div>
 
                 <div class="music-selector custom-dropdown">
-                    <button id="musicDropdownToggle" class="music-btn dropdown-toggle">🎵 SELECT MUSIC: 🌲 Woodland
+                    <button id="musicDropdownToggle" class="music-btn dropdown-toggle">🎵 SELECT MUSIC: 🎹 Morning
+                        Whistle
                         ▾</button>
                     <div id="musicDropdownOptions" class="music-options hidden">
-                        <button id="musicWoodland" class="music-btn active" data-theme="woodland">
-                            🌲 Woodland
+                        <button id="musicWoodland" class="music-btn active" data-theme="morningWhistle">
+                            🎹 Morning Whistle
                         </button>
-                        <button id="musicZen" class="music-btn" data-theme="zen">
-                            🧘 Zen
+                        <button id="musicZen" class="music-btn" data-theme="riverJig">
+                            🎻 River Driver Jig
                         </button>
-                        <button id="musicCeltic" class="music-btn" data-theme="celtic">
-                            🎻 Celtic
+                        <button id="musicCeltic" class="music-btn" data-theme="sawmillScramble">
+                            ⚙️ Sawmill Scramble
                         </button>
                     </div>
                 </div>
@@ -112,65 +114,8 @@
         </div>
 
         <div id="aboutOverlay" class="overlay hidden">
-            <div class="overlay-content story-modal about-modal">
-                <h2 class="about-title">ABOUT TIMBER TALLY</h2>
-                <div class="intro-scene" aria-label="A Victorian businessman shaking hands with a beaver in a suit">
-                    <div class="intro-card intro-human-card">
-                        <div class="figure-label">Lumber Company</div>
-                        <div class="intro-figure intro-human-figure" aria-hidden="true">
-                            <div class="top-hat"></div>
-                            <div class="head"></div>
-                            <div class="collar"></div>
-                            <div class="torso"></div>
-                            <div class="vest"></div>
-                            <div class="button button-one"></div>
-                            <div class="button button-two"></div>
-                            <div class="button button-three"></div>
-                            <div class="arm arm-left"></div>
-                            <div class="arm arm-right"></div>
-                        </div>
-                    </div>
-
-                    <div class="intro-handshake" aria-hidden="true">
-                        <div class="handshake-ring"></div>
-                        <div class="handshake-arm handshake-arm-left"></div>
-                        <div class="handshake-arm handshake-arm-right"></div>
-                        <div class="handshake-cuff handshake-cuff-left"></div>
-                        <div class="handshake-cuff handshake-cuff-right"></div>
-                        <div class="handshake-hand handshake-hand-left"></div>
-                        <div class="handshake-hand handshake-hand-right"></div>
-                        <div class="handshake-clasp"></div>
-                        <div class="handshake-spark handshake-spark-one"></div>
-                        <div class="handshake-spark handshake-spark-two"></div>
-                    </div>
-
-                    <div class="intro-card intro-beaver-card">
-                        <div class="figure-label">Chuck</div>
-                        <div class="intro-figure intro-beaver-figure" aria-hidden="true">
-                            <div class="ear ear-left"></div>
-                            <div class="ear ear-right"></div>
-                            <div class="head"></div>
-                            <div class="muzzle"></div>
-                            <div class="whisker whisker-left"></div>
-                            <div class="whisker whisker-right"></div>
-                            <div class="torso"></div>
-                            <div class="tie"></div>
-                            <div class="vest-buttons"></div>
-                            <div class="tail"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="about-copy">
-                    <p>Timber Tally is an alternate-history lumber trade story set in the late 1800s, where humans and
-                        highly intelligent beavers run the river timber economy together. The opening handshake marks
-                        the Great Log Accord, a business deal that links beaver timber supply with human industry and
-                        technology.</p>
-                    <p>You play a beaver named Chuck, a fulfillment specialist managing logs as they float down the
-                        river. The goal is
-                        not just to clear lines, but to complete orders, keep the ledger moving, and ship perfect stacks
-                        off to human cities by wagon or steamboat. As contracts grow, the work gets bigger and the
-                        stakes rise, from cabins to railroads and Victorian megaprojects.</p>
-                </div>
+            <div class="overlay-content about-image-modal">
+                <img class="about-image" src="images/about.png" alt="About Timber Tally poster">
                 <button id="aboutCloseBtn" class="button button-large">CLOSE</button>
             </div>
         </div>

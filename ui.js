@@ -59,18 +59,18 @@ class GameUI {
 
         // Music buttons
         this.musicButtons = {
-            woodland: document.getElementById('musicWoodland'),
-            zen: document.getElementById('musicZen'),
-            celtic: document.getElementById('musicCeltic')
+            morningWhistle: document.getElementById('musicWoodland'),
+            riverJig: document.getElementById('musicZen'),
+            sawmillScramble: document.getElementById('musicCeltic')
         };
 
         // In-game music dropdown
         this.inGameMusicToggle = document.getElementById('inGameMusicToggle');
         this.inGameMusicOptions = document.getElementById('inGameMusicOptions');
         this.inGameMusicButtons = {
-            woodland: document.getElementById('inGameWoodland'),
-            zen: document.getElementById('inGameZen'),
-            celtic: document.getElementById('inGameCeltic')
+            morningWhistle: document.getElementById('inGameWoodland'),
+            riverJig: document.getElementById('inGameZen'),
+            sawmillScramble: document.getElementById('inGameCeltic')
         };
 
         // Input debouncing
@@ -487,7 +487,7 @@ class GameUI {
 
         // Start playing selected music
         const selectedTheme = Object.entries(this.musicButtons)
-            .find(([_, btn]) => btn.classList.contains('active'))?.[0] || 'woodland';
+            .find(([_, btn]) => btn.classList.contains('active'))?.[0] || 'morningWhistle';
         musicManager.stopAll();
         musicManager.playTheme(selectedTheme); // Async - runs in background
     }
@@ -550,7 +550,7 @@ class GameUI {
 
         // Resume music
         const selectedTheme = Object.entries(this.musicButtons)
-            .find(([_, btn]) => btn.classList.contains('active'))?.[0] || 'woodland';
+            .find(([_, btn]) => btn.classList.contains('active'))?.[0] || 'morningWhistle';
         musicManager.stopAll();
         musicManager.playTheme(selectedTheme); // Async - runs in background
     }
@@ -659,7 +659,7 @@ class GameUI {
 
         if (this.gameStarted && !game.paused && !game.gameOver) {
             const selectedTheme = Object.entries(this.musicButtons)
-                .find(([_, btn]) => btn.classList.contains('active'))?.[0] || musicManager.currentTheme || 'woodland';
+                .find(([_, btn]) => btn.classList.contains('active'))?.[0] || musicManager.currentTheme || 'morningWhistle';
             musicManager.stopAll();
             musicManager.playTheme(selectedTheme);
         }
