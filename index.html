@@ -116,6 +116,17 @@
         <div id="aboutOverlay" class="overlay hidden">
             <div class="overlay-content about-image-modal">
                 <img class="about-image" src="images/about.png" alt="About Timber Tally poster">
+                <div class="about-copy"
+                    style="max-width:760px; text-align:left; margin-top:12px; color: #ead8bd; line-height:1.5;">
+                    <p>Timber Tally is an alternate-history lumber trade story set in the late 1800s, where humans and
+                        highly intelligent beavers run the river timber economy together. The opening handshake marks
+                        the Great Log Accord, a business deal that links beaver timber supply with human industry and
+                        technology.</p>
+                    <p>You play as a beaver named Chuck, a "Timber Tally" worker who manages logs as they float down the
+                        river. The goal is not just to clear lines, but to complete orders, keep the ledger moving, and
+                        ship perfect stacks off to human cities by wagon or steamboat. As contracts grow, the work gets
+                        bigger and the stakes rise, from cabins to railroads and Victorian megaprojects.</p>
+                </div>
                 <button id="aboutCloseBtn" class="button button-large">CLOSE</button>
             </div>
         </div>
@@ -142,7 +153,7 @@
         <div id="gameWinOverlay" class="overlay hidden">
             <div class="overlay-content win-modal">
                 <h2>CONTRACT COMPLETE!</h2>
-                <p class="win-subtitle">You finished Timber Tally at Level 30.</p>
+                <p class="win-subtitle">You finished the final level of Timber Tally.</p>
                 <div class="final-score">
                     <div class="label">FINAL EARNINGS</div>
                     <div id="winFinalScore" class="score-value">0</div>
@@ -150,11 +161,36 @@
                 <div class="credits-box">
                     <h3>CREDITS</h3>
                     <p>Created by the Timber Tally project creators.</p>
-                    <p>Built with HTML, CSS, and JavaScript.</p>
                 </div>
                 <div class="button-group">
                     <button id="winRestartBtn" class="button">PLAY AGAIN</button>
                     <button id="winMainMenuBtn" class="button">MAIN MENU</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="endingOverlay" class="overlay hidden">
+            <div class="overlay-content story-modal" role="dialog" aria-modal="true">
+                <div class="intro-scene" id="endingSceneCard">
+                    <div></div>
+                    <div class="intro-card">
+                        <img id="endingImage" class="ending-image" src="" alt="" />
+                        <div class="figure-label">The End</div>
+                    </div>
+                    <div></div>
+                </div>
+
+                <div id="endingText" class="about-copy"
+                    style="max-width:68ch; margin: 12px auto 18px; text-align:left;"></div>
+
+                <div style="display:flex; gap:12px; justify-content:center; align-items:center;">
+                    <button id="endingPrevBtn" class="button">← PREV</button>
+                    <div id="endingProgress" style="color:#e9cca0; font-weight:bold;"></div>
+                    <button id="endingNextBtn" class="button">NEXT →</button>
+                </div>
+
+                <div style="margin-top:18px;">
+                    <button id="endingCloseBtn" class="button button-secondary">CLOSE</button>
                 </div>
             </div>
         </div>

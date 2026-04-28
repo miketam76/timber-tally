@@ -211,7 +211,15 @@ body::after {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 20px 12px;
+    /* allow space so content can sit comfortably on small viewports */
+    overflow-y: hidden;
+    /* keep the page from scrolling; modal content scrolls instead */
     z-index: 1000;
+}
+
+.overlay {
+    touch-action: auto;
 }
 
 .overlay.hidden {
@@ -225,6 +233,13 @@ body::after {
     text-align: center;
     border-radius: 10px;
     box-shadow: 0 0 30px rgba(176, 138, 87, 0.35);
+}
+
+/* Make overlay content scroll when it exceeds viewport height */
+.overlay-content {
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .overlay-content h2 {
@@ -449,6 +464,30 @@ body::after {
     flex-direction: column;
     align-items: center;
     gap: 14px;
+}
+
+.about-image-modal {
+    -webkit-overflow-scrolling: touch;
+}
+
+.about-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: calc(50vh);
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+@media (max-width: 600px) {
+    .about-image-modal {
+        max-height: calc(100vh - 20px);
+        padding: 12px;
+    }
+
+    .about-image {
+        max-height: 36vh;
+    }
 }
 
 .about-image {
@@ -2046,4 +2085,20 @@ body::after {
         height: 52px;
         font-size: 1.1rem;
     }
+}
+
+.ending-image {
+    display: block;
+    max-width: 320px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 2px solid rgba(228, 193, 139, 0.28);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+    margin: 6px auto 0;
+}
+
+#endingProgress {
+    min-width: 92px;
+    text-align: center;
 }

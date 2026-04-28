@@ -29,6 +29,52 @@ class GameUI {
         this.gameOverLeaderboardList = document.getElementById('gameOverLeaderboardList');
         this.winFinalScoreDisplay = document.getElementById('winFinalScore');
 
+        // Ending sequence overlay (5 scenes)
+        this.endingOverlay = document.getElementById('endingOverlay');
+        this.endingImage = document.getElementById('endingImage');
+        this.endingText = document.getElementById('endingText');
+        this.endingPrevBtn = document.getElementById('endingPrevBtn');
+        this.endingNextBtn = document.getElementById('endingNextBtn');
+        this.endingCloseBtn = document.getElementById('endingCloseBtn');
+        this.endingProgress = document.getElementById('endingProgress');
+        this.endingScenes = [
+            {
+                image: 'images/Ending_scene_1.png',
+                text: `Chuck placed the final log with a heavy, satisfying thud. The last "perfect stack"—the legendary four-line shipment that had made him the talk of the shanties—was lashed tight and ready.
+
+As he stood alone on the riverbank, a profound calm settled over the valley. He watched in quiet contemplation as the steam-tug pulled his life’s work away toward the distant shipping yards, the massive timber rafts descending into the haze of a heavy, smoky sunset.
+
+He looked down at his ledger; for the first time in years, the columns were empty and the ink was dry. Beside him sat a heavy canvas bag, bursting with the Victorian gold fortune he had earned one line at a time. While the River Driver’s Jig had finally ended, Chuck knew his greatest work was still ahead. The Great Log Accord had brought wealth to the valley, but now it was time to build something more than just shipments—it was time to build a home for every worker family.`
+            },
+            {
+                image: 'images/Ending_scene_2.png',
+                text: `Chuck didn’t travel alone. By his side was Wilks, a sharp-eyed beaver from Kingston who shared his dream of a permanent sanctuary. Together, they entered the ornate, mahogany-lined office of the Mayor of Smith Falls.
+
+On the large oak desk lay a sprawling survey map of the city limits. With a firm, historic handshake and the heavy thud of a gold-filled canvas bag, the deal was struck. Chuck and Wilks purchased a vast, fertile plot of land just outside the city—a place where the river ran deep and the timber was plentiful.
+
+The Mayor signed the deed, but it was Chuck who held the vision. This wasn't just a land grab; it was the foundation of the first-ever independent beaver township. The Great Log Accord was no longer just a contract for trade—it was now a title for a home.`
+            },
+            {
+                image: 'images/Ending_scene_3.png',
+                text: `The work started before the ink on the deed was even dry. Chuck and Wilks didn’t just hire workers; they invited families. Wagons rolled in from across the valley, laden with supplies and the dreams of a new life.
+
+The sound of the river was soon joined by the rhythmic song of the crosscut saw and the steady beat of hammers. Every worker was an investor, and every home built was a promise kept. Families who had spent generations moving from one temporary shanty to another finally began to raise their own rafters. Under Chuck’s watchful eye and Wilks’ careful planning, the raw lumber from the river was transformed into the sturdy skeletons of a future. The "Timber Creek Supply & Tools" shed became the beating heart of the project, a place where industry finally met community.`
+            },
+            {
+                image: 'images/Ending_scene_4.png',
+                text: `Two years of tireless labor and shared vision culminated in a single, historic morning. The sawdust had settled, and in its place stood a town center built with precision and pride. Chuck and Wilks stood atop a stone dais in the new town square, surrounded by the families who had turned a forest plot into a sanctuary.
+
+Human dignitaries from Smith Falls and Kingston stood alongside the beaver pioneers as a grand wooden sign was unveiled. With a cheer that echoed through the valley, the community officially claimed its name: Timber Creek Township. Chuck didn't just see buildings; he saw a legacy of accord. For the first time in history, beavers and humans didn't just trade together—they lived as neighbors. The Accord was no longer a piece of paper; it was a home that would stand for generations.`
+            },
+            {
+                image: 'images/Ending_scene_5.png',
+                text: `By 1943, Timber Creek had transformed. The population hit 20,000 as the township became a vital industrial hub for the war effort. While the old crosscut saws were mostly silent, the air hummed with the sound of high-speed mills producing specialized spruce for the legendary 'Mosquito' aircraft and wooden hulls for naval gunships.
+
+Chuck and Wilks, now the grey-furred elders of the valley, watched the progress from the park that bore their names. They saw their children working alongside human partners not just to harvest, but to replant. The Great Log Accord had evolved into a cycle of life; for every tree that went to the front lines, two were planted in the hills. The founders sat in quiet pride, knowing they hadn't just built a town—they had built a future that could withstand the storms of history.`
+            }
+        ];
+        this.currentEndingIndex = 0;
+
         // Mobile gamepad controls
         this.mobileGamepad = document.getElementById('mobileGamepad');
         this.dpadUp = document.getElementById('dpadUp');
@@ -127,6 +173,11 @@ class GameUI {
             if (!this.contractOverlay) return;
             this.contractOverlay.classList.add('hidden');
         };
+
+        // Ending navigation handlers
+        if (this.endingPrevBtn) this.endingPrevBtn.addEventListener('click', () => this.showEndingScene(this.currentEndingIndex - 1));
+        if (this.endingNextBtn) this.endingNextBtn.addEventListener('click', () => this.showEndingScene(this.currentEndingIndex + 1));
+        if (this.endingCloseBtn) this.endingCloseBtn.addEventListener('click', () => this.closeEndingSequence());
 
         this.initializeEventListeners();
         this.startGameLoop(); // Always start rendering loop
@@ -583,11 +634,58 @@ class GameUI {
     }
 
     showAbout() {
-        if (this.aboutOverlay) this.aboutOverlay.classList.remove('hidden');
+        if (this.aboutOverlay) {
+            this.aboutOverlay.classList.remove('hidden');
+
+            // Lock page scroll while modal is open and enable scrolling inside modal
+            document.body.style.overflow = 'hidden';
+            const content = this.aboutOverlay.querySelector('.overlay-content');
+            if (content) {
+                content.setAttribute('tabindex', '0');
+                content.focus();
+
+                // Wheel handler: manually scroll the modal content so the page doesn't move
+                this._aboutWheelHandler = (e) => {
+                    e.preventDefault();
+                    content.scrollTop += e.deltaY;
+                };
+                content.addEventListener('wheel', this._aboutWheelHandler, { passive: false });
+
+                // Touch handlers for mobile/touch devices
+                let startY = 0;
+                this._aboutTouchStart = (e) => { startY = e.touches ? e.touches[0].clientY : 0; };
+                this._aboutTouchMove = (e) => {
+                    if (!e.touches) return;
+                    const currentY = e.touches[0].clientY;
+                    const dy = startY - currentY;
+                    startY = currentY;
+                    content.scrollTop += dy;
+                    e.preventDefault();
+                };
+                content.addEventListener('touchstart', this._aboutTouchStart, { passive: false });
+                content.addEventListener('touchmove', this._aboutTouchMove, { passive: false });
+            }
+        }
     }
 
     hideAbout() {
-        if (this.aboutOverlay) this.aboutOverlay.classList.add('hidden');
+        if (this.aboutOverlay) {
+            this.aboutOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
+            const content = this.aboutOverlay.querySelector('.overlay-content');
+            if (content) {
+                if (this._aboutWheelHandler) {
+                    content.removeEventListener('wheel', this._aboutWheelHandler, { passive: false });
+                    this._aboutWheelHandler = null;
+                }
+                if (this._aboutTouchStart) {
+                    content.removeEventListener('touchstart', this._aboutTouchStart, { passive: false });
+                    content.removeEventListener('touchmove', this._aboutTouchMove, { passive: false });
+                    this._aboutTouchStart = null;
+                    this._aboutTouchMove = null;
+                }
+            }
+        }
     }
 
     // End game during gameplay
@@ -633,17 +731,61 @@ class GameUI {
 
     // Show winner screen at level cap
     showGameWon() {
-        if (this.winFinalScoreDisplay) this.winFinalScoreDisplay.textContent = this.formatCurrency(game.score);
+        // Start ending story sequence instead of immediate credit screen
         this.gameStarted = false;
         game.paused = true;
         musicManager.stopAll();
         musicManager.playTheme('victory');
-        this.pauseBtn.textContent = '⏸️';
-        if (this.btnPauseMobile) this.btnPauseMobile.textContent = '⏸';
         if (this.contractOverlay) this.contractOverlay.classList.add('hidden');
         if (this.gameOverOverlay) this.gameOverOverlay.classList.add('hidden');
-        if (this.gameWinOverlay) this.gameWinOverlay.classList.remove('hidden');
+        this.startEndingSequence();
         gameStorage.saveScore(game.score, game.level);
+        this.updateMobileControlsVisibility();
+    }
+
+    startEndingSequence() {
+        if (!this.endingOverlay) return;
+        this.currentEndingIndex = 0;
+        this.showEndingScene(0);
+        this.endingOverlay.classList.remove('hidden');
+        // Pause background audio; play a soft theme if available
+        musicManager.pauseMusic();
+    }
+
+    showEndingScene(index) {
+        if (!this.endingOverlay) return;
+        const clamped = Math.max(0, Math.min(index, this.endingScenes.length - 1));
+        this.currentEndingIndex = clamped;
+        const scene = this.endingScenes[clamped];
+
+        // Image handling
+        if (scene.image) {
+            this.endingImage.src = scene.image;
+            this.endingImage.alt = `Ending scene ${clamped + 1}`;
+            this.endingImage.style.display = 'block';
+        } else {
+            this.endingImage.src = '';
+            this.endingImage.alt = '';
+            this.endingImage.style.display = 'none';
+        }
+
+        // Text
+        if (this.endingText) this.endingText.textContent = scene.text || '';
+
+        // Buttons
+        if (this.endingPrevBtn) this.endingPrevBtn.disabled = clamped === 0;
+        if (this.endingNextBtn) this.endingNextBtn.disabled = clamped === this.endingScenes.length - 1;
+
+        if (this.endingProgress) this.endingProgress.textContent = `Scene ${clamped + 1} / ${this.endingScenes.length}`;
+    }
+
+    closeEndingSequence() {
+        if (!this.endingOverlay) return;
+        this.endingOverlay.classList.add('hidden');
+        // After the story, show the credits/modal that existed previously
+        if (this.winFinalScoreDisplay) this.winFinalScoreDisplay.textContent = this.formatCurrency(game.score);
+        if (this.gameWinOverlay) this.gameWinOverlay.classList.remove('hidden');
+        musicManager.playTheme('victory');
         this.updateMobileControlsVisibility();
     }
 
@@ -1807,5 +1949,5 @@ class GameUI {
 
 // Initialize UI when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    const gameUI = new GameUI();
+    window.gameUI = new GameUI();
 });
