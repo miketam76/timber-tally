@@ -636,55 +636,14 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
     showAbout() {
         if (this.aboutOverlay) {
             this.aboutOverlay.classList.remove('hidden');
-
-            // Lock page scroll while modal is open and enable scrolling inside modal
-            document.body.style.overflow = 'hidden';
-            const content = this.aboutOverlay.querySelector('.overlay-content');
-            if (content) {
-                content.setAttribute('tabindex', '0');
-                content.focus();
-
-                // Wheel handler: manually scroll the modal content so the page doesn't move
-                this._aboutWheelHandler = (e) => {
-                    e.preventDefault();
-                    content.scrollTop += e.deltaY;
-                };
-                content.addEventListener('wheel', this._aboutWheelHandler, { passive: false });
-
-                // Touch handlers for mobile/touch devices
-                let startY = 0;
-                this._aboutTouchStart = (e) => { startY = e.touches ? e.touches[0].clientY : 0; };
-                this._aboutTouchMove = (e) => {
-                    if (!e.touches) return;
-                    const currentY = e.touches[0].clientY;
-                    const dy = startY - currentY;
-                    startY = currentY;
-                    content.scrollTop += dy;
-                    e.preventDefault();
-                };
-                content.addEventListener('touchstart', this._aboutTouchStart, { passive: false });
-                content.addEventListener('touchmove', this._aboutTouchMove, { passive: false });
-            }
+            this.enableModalScroll(this.aboutOverlay);
         }
     }
 
     hideAbout() {
         if (this.aboutOverlay) {
+            this.disableModalScroll(this.aboutOverlay);
             this.aboutOverlay.classList.add('hidden');
-            document.body.style.overflow = '';
-            const content = this.aboutOverlay.querySelector('.overlay-content');
-            if (content) {
-                if (this._aboutWheelHandler) {
-                    content.removeEventListener('wheel', this._aboutWheelHandler, { passive: false });
-                    this._aboutWheelHandler = null;
-                }
-                if (this._aboutTouchStart) {
-                    content.removeEventListener('touchstart', this._aboutTouchStart, { passive: false });
-                    content.removeEventListener('touchmove', this._aboutTouchMove, { passive: false });
-                    this._aboutTouchStart = null;
-                    this._aboutTouchMove = null;
-                }
-            }
         }
     }
 
@@ -750,6 +709,7 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
         this.endingOverlay.classList.remove('hidden');
         // Pause background audio; play a soft theme if available
         musicManager.pauseMusic();
+        this.enableModalScroll(this.endingOverlay);
     }
 
     showEndingScene(index) {
@@ -781,6 +741,7 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
 
     closeEndingSequence() {
         if (!this.endingOverlay) return;
+        this.disableModalScroll(this.endingOverlay);
         this.endingOverlay.classList.add('hidden');
         // After the story, show the credits/modal that existed previously
         if (this.winFinalScoreDisplay) this.winFinalScoreDisplay.textContent = this.formatCurrency(game.score);
@@ -814,6 +775,51 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
         this.inputDebounce = {};
         this.stopAllHeldActions();
         game.endSoftDrop();
+    }
+
+    enableModalScroll(overlay) {
+        if (!overlay) return;
+        document.body.style.overflow = 'hidden';
+        const content = overlay.querySelector('.overlay-content');
+        if (!content) return;
+        content.setAttribute('tabindex', '0');
+        content.focus();
+
+        // handlers stored on the overlay so they can be removed later
+        const wheelHandler = (e) => {
+            e.preventDefault();
+            content.scrollTop += e.deltaY;
+        };
+
+        let startY = 0;
+        const touchStart = (e) => { startY = e.touches ? e.touches[0].clientY : 0; };
+        const touchMove = (e) => {
+            if (!e.touches) return;
+            const currentY = e.touches[0].clientY;
+            const dy = startY - currentY;
+            startY = currentY;
+            content.scrollTop += dy;
+            e.preventDefault();
+        };
+
+        content.addEventListener('wheel', wheelHandler, { passive: false });
+        content.addEventListener('touchstart', touchStart, { passive: false });
+        content.addEventListener('touchmove', touchMove, { passive: false });
+
+        overlay._modalScrollHandlers = { wheelHandler, touchStart, touchMove };
+    }
+
+    disableModalScroll(overlay) {
+        if (!overlay) return;
+        document.body.style.overflow = '';
+        const content = overlay.querySelector('.overlay-content');
+        if (!content) return;
+        const handlers = overlay._modalScrollHandlers;
+        if (!handlers) return;
+        content.removeEventListener('wheel', handlers.wheelHandler, { passive: false });
+        content.removeEventListener('touchstart', handlers.touchStart, { passive: false });
+        content.removeEventListener('touchmove', handlers.touchMove, { passive: false });
+        overlay._modalScrollHandlers = null;
     }
 
     // Update leaderboard display

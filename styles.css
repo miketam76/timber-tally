@@ -451,6 +451,13 @@ body::after {
     box-shadow: 0 0 30px rgba(176, 138, 87, 0.45);
 }
 
+/* Allow story modals (ending scene) to scroll their content when displayed as overlay */
+.overlay-content.story-modal {
+    overflow-y: auto !important;
+    max-height: calc(100vh - 48px) !important;
+    -webkit-overflow-scrolling: touch;
+}
+
 .about-modal {
     max-width: 860px;
 }
