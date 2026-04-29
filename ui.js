@@ -37,42 +37,67 @@ class GameUI {
         this.endingNextBtn = document.getElementById('endingNextBtn');
         this.endingCloseBtn = document.getElementById('endingCloseBtn');
         this.endingProgress = document.getElementById('endingProgress');
-        this.endingScenes = [
-            {
-                image: 'images/Ending_scene_1.webp',
-                text: `Chuck placed the final log with a heavy, satisfying thud. The last "perfect stack"—the legendary four-line shipment that had made him the talk of the shanties—was lashed tight and ready.
+        // Ending variants selected by final score. Scenes below map to the three endings:
+        // - tradition: Tradition Ending (Humble Hauler)
+        // - expansion: Expansion Ending (Seasoned Shipper)
+        // - township: Township Ending (Legend of the Woods)
+        this.endingVariants = {
+            tradition: [
+                {
+                    image: 'images/Ending_Humble_Hauler.webp',
+                    text: `The gold didn't stack as high as the timber did, but Chuck found a different kind of wealth. After a lifetime in the woods, he hung up his spectacles and retired to a quiet cabin by the river.
+
+He didn't leave his son a fortune, but he left him something better: the sharpest saw in the valley and every secret of the forest. As the 1940s dawn, a new generation steps up—armed with his father's wisdom and a steady hand.`
+                }
+            ],
+            expansion: [
+                {
+                    image: 'images/Ending_Seasoned_Shipper.webp',
+                    text: `Chuck didn’t just survive the frontier; he mastered it. By playing the long game and timing every shipment perfectly, he turned a ragtag logging camp into a respected regional powerhouse.
+
+With a heavy purse and a reputation for reliability, Chuck moved from the mud of the riverbank to a sturdy brick office. He leaves behind a sprawling operation and enough capital to ensure his family isn’t just part of the industrial revolution—they’re leading it.`
+                }
+            ],
+            township: [
+                {
+                    image: 'images/Ending_scene_1.webp',
+                    text: `Chuck placed the final log with a heavy, satisfying thud. The last "perfect stack"—the legendary four-line shipment that had made him the talk of the shanties—was lashed tight and ready.
 
 As he stood alone on the riverbank, a profound calm settled over the valley. He watched in quiet contemplation as the steam-tug pulled his life’s work away toward the distant shipping yards, the massive timber rafts descending into the haze of a heavy, smoky sunset.
 
 He looked down at his ledger; for the first time in years, the columns were empty and the ink was dry. Beside him sat a heavy canvas bag, bursting with the Victorian gold fortune he had earned one line at a time. While the River Driver’s Jig had finally ended, Chuck knew his greatest work was still ahead. The Great Log Accord had brought wealth to the valley, but now it was time to build something more than just shipments—it was time to build a home for every worker family.`
-            },
-            {
-                image: 'images/Ending_scene_2.webp',
-                text: `Chuck didn’t travel alone. By his side was Wilks, a sharp-eyed beaver from Kingston who shared his dream of a permanent sanctuary. Together, they entered the ornate, mahogany-lined office of the Mayor of Smith Falls.
+                },
+                {
+                    image: 'images/Ending_scene_2.webp',
+                    text: `Chuck didn’t travel alone. By his side was Wilks, a sharp-eyed beaver from Kingston who shared his dream of a permanent sanctuary. Together, they entered the ornate, mahogany-lined office of the Mayor of Smith Falls.
 
 On the large oak desk lay a sprawling survey map of the city limits. With a firm, historic handshake and the heavy thud of a gold-filled canvas bag, the deal was struck. Chuck and Wilks purchased a vast, fertile plot of land just outside the city—a place where the river ran deep and the timber was plentiful.
 
 The Mayor signed the deed, but it was Chuck who held the vision. This wasn't just a land grab; it was the foundation of the first-ever independent beaver township. The Great Log Accord was no longer just a contract for trade—it was now a title for a home.`
-            },
-            {
-                image: 'images/Ending_scene_3.webp',
-                text: `The work started before the ink on the deed was even dry. Chuck and Wilks didn’t just hire workers; they invited families. Wagons rolled in from across the valley, laden with supplies and the dreams of a new life.
+                },
+                {
+                    image: 'images/Ending_scene_3.webp',
+                    text: `The work started before the ink on the deed was even dry. Chuck and Wilks didn’t just hire workers; they invited families. Wagons rolled in from across the valley, laden with supplies and the dreams of a new life.
 
 The sound of the river was soon joined by the rhythmic song of the crosscut saw and the steady beat of hammers. Every worker was an investor, and every home built was a promise kept. Families who had spent generations moving from one temporary shanty to another finally began to raise their own rafters. Under Chuck’s watchful eye and Wilks’ careful planning, the raw lumber from the river was transformed into the sturdy skeletons of a future. The "Timber Creek Supply & Tools" shed became the beating heart of the project, a place where industry finally met community.`
-            },
-            {
-                image: 'images/Ending_scene_4.webp',
-                text: `Two years of tireless labor and shared vision culminated in a single, historic morning. The sawdust had settled, and in its place stood a town center built with precision and pride. Chuck and Wilks stood atop a stone dais in the new town square, surrounded by the families who had turned a forest plot into a sanctuary.
+                },
+                {
+                    image: 'images/Ending_scene_4.webp',
+                    text: `Two years of tireless labor and shared vision culminated in a single, historic morning. The sawdust had settled, and in its place stood a town center built with precision and pride. Chuck and Wilks stood atop a stone dais in the new town square, surrounded by the families who had turned a forest plot into a sanctuary.
 
 Human dignitaries from Smith Falls and Kingston stood alongside the beaver pioneers as a grand wooden sign was unveiled. With a cheer that echoed through the valley, the community officially claimed its name: Timber Creek Township. Chuck didn't just see buildings; he saw a legacy of accord. For the first time in history, beavers and humans didn't just trade together—they lived as neighbors. The Accord was no longer a piece of paper; it was a home that would stand for generations.`
-            },
-            {
-                image: 'images/Ending_scene_5.webp',
-                text: `By 1943, Timber Creek had transformed. The population hit 20,000 as the township became a vital industrial hub for the war effort. While the old crosscut saws were mostly silent, the air hummed with the sound of high-speed mills producing specialized spruce for the legendary 'Mosquito' aircraft and wooden hulls for naval gunships.
+                },
+                {
+                    image: 'images/Ending_scene_5.webp',
+                    text: `By 1943, Timber Creek had transformed. The population hit 20,000 as the township became a vital industrial hub for the war effort. While the old crosscut saws were mostly silent, the air hummed with the sound of high-speed mills producing specialized spruce for the legendary 'Mosquito' aircraft and wooden hulls for naval gunships.
 
 Chuck and Wilks, now the grey-furred elders of the valley, watched the progress from the park that bore their names. They saw their children working alongside human partners not just to harvest, but to replant. The Great Log Accord had evolved into a cycle of life; for every tree that went to the front lines, two were planted in the hills. The founders sat in quiet pride, knowing they hadn't just built a town—they had built a future that could withstand the storms of history.`
-            }
-        ];
+                }
+            ]
+        };
+
+        // Default scenes; will be replaced at run end depending on score
+        this.endingScenes = this.endingVariants.township.slice();
         this.currentEndingIndex = 0;
 
         // Mobile gamepad controls
@@ -704,12 +729,31 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
 
     startEndingSequence() {
         if (!this.endingOverlay) return;
+
+        // Choose ending variant by player's final score (game.score)
+        const variant = this.chooseEndingVariant ? this.chooseEndingVariant(game.score) : 'township';
+        this.endingScenes = (this.endingVariants[variant] || this.endingVariants.township).slice();
+
         this.currentEndingIndex = 0;
         this.showEndingScene(0);
         this.endingOverlay.classList.remove('hidden');
         // Pause background audio; play a soft theme if available
         musicManager.pauseMusic();
         this.enableModalScroll(this.endingOverlay);
+    }
+
+    // Map final score (points) to an ending variant key
+    chooseEndingVariant(score) {
+        // Convert points to dollars at $0.01/point for readable thresholds
+        const dollars = score / 100;
+
+        // Thresholds (adjustable):
+        // - tradition: <$100
+        // - expansion: $100 - $1000
+        // - township: >$1000
+        if (dollars < 100) return 'tradition';
+        if (dollars < 1000) return 'expansion';
+        return 'township';
     }
 
     showEndingScene(index) {

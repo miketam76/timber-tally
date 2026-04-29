@@ -166,4 +166,46 @@ Change `pitch` values (note names), `duration` (beat length), or `volume` to cus
 - Sound effect options (8-bit vs. modern)
 - Tutorials or challenging modes
 
+## Endings & Testing
+
+This build includes three distinct narrative endings determined by your final earnings (displayed as dollars at $0.01 per point):
+
+- Tradition (Humble Hauler) — modest run, earned less than $100. Image: `images/Ending_Humble_Hauler.webp`.
+- Expansion (Seasoned Shipper) — steady, mid-level success, $100 — $1,000. Image: `images/Ending_Seasoned_Shipper.webp`.
+- Township (Legend of the Woods) — high-score/lucky runs, > $1,000. Uses the five-scene story sequence with `images/Ending_scene_1.webp` through `images/Ending_scene_5.webp` and the original scene texts.
+
+These endings are selected by `ui.js` at the end-of-run sequence using your final `game.score`. If you'd like to test them quickly while running the game (for example using VS Code's Go Live):
+
+1. Open the game page in your browser and open DevTools (F12).
+2. Paste the helper below into the Console and run it once:
+
+```javascript
+function forceEnding(variant) {
+    const scoreByVariant = { tradition: 5000, expansion: 30000, township: 150000 };
+    if (!gameUI || !game) return console.error('gameUI/game not found');
+    game.score = scoreByVariant[variant];
+    gameUI.startEndingSequence();
+    console.log('Triggered', variant, '->', gameUI.chooseEndingVariant(game.score));
+}
+// Examples:
+// forceEnding('tradition');
+// forceEnding('expansion');
+// forceEnding('township');
+```
+
+3. To exercise the in-game contract -> win flow (closer to real gameplay):
+
+```javascript
+// Simulate a final contract summary that reaches the last level
+game.triggerContractSummary({ reachedMaxLevel: true, completedLevel: game.level });
+// Then dismiss the UI contract summary (this follows the normal flow)
+gameUI.dismissContractSummary();
+```
+
+Files & hooks:
+- Ending selection logic: `ui.js` (chooseEndingVariant / startEndingSequence)
+- Contract summary flow: `game.js` (triggerContractSummary / resumeAfterContractSummary)
+
+If you want a small debug UI to switch endings without the console I can add it as a temporary overlay.
+
 Enjoy! 🎮
