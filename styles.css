@@ -233,14 +233,15 @@ body::after {
     text-align: center;
     border-radius: 10px;
     box-shadow: 0 0 30px rgba(176, 138, 87, 0.35);
-}
-
-/* Make overlay content scroll when it exceeds viewport height */
-.overlay-content {
     max-height: calc(100vh - 48px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
+
+/* Make overlay content scroll when it exceeds viewport height */
+/* .overlay-content {
+    
+} */
 
 .overlay-content h2 {
     color: #f7dfb7;
@@ -453,7 +454,7 @@ body::after {
 
 /* Allow story modals (ending scene) to scroll their content when displayed as overlay */
 .overlay-content.story-modal {
-    overflow-y: auto !important;
+    /* overflow-y: auto !important; */
     max-height: calc(100vh - 48px) !important;
     -webkit-overflow-scrolling: touch;
 }
