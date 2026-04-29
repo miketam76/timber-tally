@@ -1238,9 +1238,9 @@ body::after {
     justify-content: space-between;
     padding: 10px;
     margin: 5px 0;
-    background: rgba(0, 255, 0, 0.1);
-    border-left: 3px solid #00ff00;
-    color: #00ff00;
+    background: rgba(177, 122, 72, 0.06);
+    border-left: 3px solid #b17a48;
+    color: #b17a48;
     font-family: 'Courier New', monospace;
 }
 
@@ -1421,7 +1421,7 @@ body::after {
 
     50% {
         opacity: 0.5;
-        background: #00ff00;
+        background: #b17a48;
     }
 
     100% {
@@ -1446,11 +1446,11 @@ body::after {
 
     0%,
     100% {
-        box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        box-shadow: 0 0 20px rgba(177, 122, 72, 0.5);
     }
 
     50% {
-        box-shadow: 0 0 40px rgba(0, 255, 0, 1);
+        box-shadow: 0 0 40px rgba(177, 122, 72, 1);
     }
 }
 
@@ -2023,7 +2023,7 @@ body::after {
     width: 160px;
     max-width: 200px;
     background: #000;
-    border: 2px solid #00ff00;
+    border: 2px solid #b17a48;
     padding: 10px;
     z-index: 10;
     margin-bottom: 10px;

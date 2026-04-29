@@ -747,10 +747,19 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
         // Convert points to dollars at $0.01/point for readable thresholds
         const dollars = score / 100;
 
-        // Thresholds (adjustable):
-        // - tradition: <$100
-        // - expansion: $100 - $1000
-        // - township: >$1000
+        // New scheme (requires both earnings and level progress):
+        // Ending 1 (tradition): >= $100 and <= $450 and passed level 9
+        // Ending 2 (expansion): > $450 and <= $1000 and passed level 11
+        // Ending 3 (township): > $1000 and passed the final level (maxLevel)
+        const level = (typeof game !== 'undefined' && game && game.level) ? game.level : 1;
+        const maxLevel = (typeof game !== 'undefined' && game && game.maxLevel) ? game.maxLevel : 20;
+
+        // Check strict user-specified endings first
+        if (dollars > 1000 && level >= maxLevel) return 'township';
+        if (dollars > 450 && dollars <= 1000 && level > 11) return 'expansion';
+        if (dollars >= 100 && dollars <= 450 && level > 9) return 'tradition';
+
+        // Fallback to previous, more permissive dollar-only mapping
         if (dollars < 100) return 'tradition';
         if (dollars < 1000) return 'expansion';
         return 'township';
@@ -951,9 +960,10 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
         if (game.lastClearedLines && game.lastClearedLines.length > 0) {
             const timeSinceClear = now - game.lastClearedTime;
             if (timeSinceClear < clearFlashDuration) {
-                // Flash effect for cleared lines
+                // Flash effect for cleared lines (use warm wood accent color)
                 const opacity = 1 - (timeSinceClear / clearFlashDuration);
-                this.ctx.fillStyle = `rgba(0, 255, 0, ${opacity * 0.6})`;
+                // Theme color: rgb(177,122,72) / hex #b17a48
+                this.ctx.fillStyle = `rgba(177, 122, 72, ${opacity * 0.6})`;
                 game.lastClearedLines.forEach(y => {
                     this.ctx.fillRect(0, y * game.CELL_SIZE, this.canvas.width, game.CELL_SIZE);
                 });
@@ -1070,13 +1080,13 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
             this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-            this.ctx.fillStyle = '#00ff00';
+            this.ctx.fillStyle = '#b17a48';
             this.ctx.font = 'bold 36px Arial';
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
 
             // Text shadow effect for PAUSED
-            this.ctx.shadowColor = 'rgba(0, 255, 0, 0.8)';
+            this.ctx.shadowColor = 'rgba(177, 122, 72, 0.8)';
             this.ctx.shadowBlur = 10;
             this.ctx.fillText('PAUSED', this.canvas.width / 2, this.canvas.height / 2);
 
@@ -1179,7 +1189,7 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
         this.ctx.fillRect(centerX - 120, centerY - 35, 240, 70);
 
         // Border
-        this.ctx.strokeStyle = message.linesCount === 4 ? '#ffff00' : '#00ff00';
+        this.ctx.strokeStyle = message.linesCount === 4 ? '#ffff00' : '#b17a48';
         this.ctx.lineWidth = 3;
         this.ctx.strokeRect(centerX - 120, centerY - 35, 240, 70);
 
@@ -1190,9 +1200,9 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
             this.ctx.shadowColor = 'rgba(255, 255, 0, 0.8)';
             this.ctx.shadowBlur = 10;
         } else {
-            // Regular line clear - green
-            this.ctx.fillStyle = '#00ff00';
-            this.ctx.shadowColor = 'rgba(0, 255, 0, 0.6)';
+            // Regular line clear - use warm wood accent to match theme
+            this.ctx.fillStyle = '#b17a48';
+            this.ctx.shadowColor = 'rgba(177, 122, 72, 0.6)';
             this.ctx.shadowBlur = 8;
         }
 
@@ -1200,7 +1210,7 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
 
         // Earnings display (period wage value) with raw points retained for clarity.
         this.ctx.font = `bold 16px Arial`;
-        this.ctx.fillStyle = message.linesCount === 4 ? '#ffff00' : '#00ff00';
+        this.ctx.fillStyle = message.linesCount === 4 ? '#ffff00' : '#b17a48';
         this.ctx.shadowBlur = 5;
         this.ctx.fillText(`+ ${this.formatCurrency(message.points)} (${message.points} pts)`, centerX, centerY + 15);
 

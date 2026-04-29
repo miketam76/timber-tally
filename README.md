@@ -1,17 +1,34 @@
 # Timber Tally
 
 # Disclaimer
-Inspired by Tetris. Tetris is a registered trademark of The Tetris Company, and Timber Tally is not affiliated with or endorsed by them.
+This build includes three distinct narrative endings selected by a combination of final earnings and which contracts (levels) you passed. Earnings are displayed as dollars at $0.01 per point.
 
-# Story
+1. Open the game page in your browser and open DevTools (F12).
 Timber Tally is an alternate-history lumber trade story set in the late 1800s, where humans and highly intelligent beavers run the river timber economy together. The opening handshake marks the Great Log Accord, a business deal that links beaver timber supply with human industry and technology.
 
 You play a beaver named Chuck, a "Timber Tally" worker who manages logs as they float down the river. The goal is not just to clear lines, but to complete orders, keep the ledger moving, and ship perfect stacks off to human cities by wagon or steamboat. As contracts grow, the work gets bigger and the stakes rise, from cabins to railroads and Victorian megaprojects.
+    // Points chosen to meet the new dollar+level rules. Points = dollars * 100
+    const scoreByVariant = {
+        tradition: 20000, // $200 -> between $100 and $450
+        expansion: 60000, // $600 -> between $450 and $1000
+        township: 150000 // $1500 -> > $1000
+    };
+    if (!gameUI || !game) return console.error('gameUI/game not found');
+    // Ensure the game's maxLevel is set (default 20) so final-ending checks work
+    game.maxLevel = game.maxLevel || 20;
 
-## Features
-- 🦫 **Alternate-History Story** - A river trade partnership between humans and beavers
-- 📜 **Great Log Accord** - Story-driven intro artwork and About panel
-- 🪵 **Timber Shipment Gameplay** - Organize logs into clean stacks and fulfill contracts
+    // Set a matching `game.level` for the chosen variant so the level checks pass
+    if (variant === 'tradition') {
+        game.level = 10; // passed level 9
+    } else if (variant === 'expansion') {
+        game.level = 12; // passed level 11
+    } else if (variant === 'township') {
+        game.level = game.maxLevel; // reached final level
+    }
+
+    game.score = scoreByVariant[variant];
+    gameUI.startEndingSequence();
+    console.log('Triggered', variant, '->', gameUI.chooseEndingVariant(game.score));
 - 💵 **Earnings System** - Contract bonuses add to your final total
 - 🎮 **Responsive Controls** - Keyboard plus a mobile on-screen gamepad
 - 👻 **Ghost Piece** - Preview showing where your current log stack will land
@@ -166,15 +183,18 @@ Change `pitch` values (note names), `duration` (beat length), or `volume` to cus
 - Sound effect options (8-bit vs. modern)
 - Tutorials or challenging modes
 
+
 ## Endings & Testing
 
-This build includes three distinct narrative endings determined by your final earnings (displayed as dollars at $0.01 per point):
+This build includes three distinct narrative endings selected by a combination of final earnings and which contracts (levels) you passed. Earnings are displayed as dollars at $0.01 per point.
 
-- Tradition (Humble Hauler) — modest run, earned less than $100. Image: `images/Ending_Humble_Hauler.webp`.
-- Expansion (Seasoned Shipper) — steady, mid-level success, $100 — $1,000. Image: `images/Ending_Seasoned_Shipper.webp`.
-- Township (Legend of the Woods) — high-score/lucky runs, > $1,000. Uses the five-scene story sequence with `images/Ending_scene_1.webp` through `images/Ending_scene_5.webp` and the original scene texts.
+- Ending 1 (Tradition / Humble Hauler): final earnings between $100 and $450 (inclusive) AND the player passed level 9.
+- Ending 2 (Expansion / Seasoned Shipper): final earnings greater than $450 and up to $1,000 (inclusive) AND the player passed level 11.
+- Ending 3 (Township / Legend of the Woods): final earnings greater than $1,000 AND the player completed the final contract (reached the configured `maxLevel`, default 20).
 
-These endings are selected by `ui.js` at the end-of-run sequence using your final `game.score`. If you'd like to test them quickly while running the game (for example using VS Code's Go Live):
+These endings are enforced in `ui.js` (chooseEndingVariant) and require both the dollar thresholds and the level progress conditions above. If a run doesn't match any of the strict rules, the UI falls back to a permissive dollar-only mapping so a reasonable ending is still shown.
+
+If you'd like to test them quickly while running the game (for example using VS Code's Go Live):
 
 1. Open the game page in your browser and open DevTools (F12).
 2. Paste the helper below into the Console and run it once:

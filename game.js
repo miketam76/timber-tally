@@ -13,7 +13,7 @@ class Game {
         this.nextPiece = null;
         this.score = 0;
         this.level = 1;
-        this.maxLevel = 30;
+        this.maxLevel = 20;
         this.linesCleared = 0;
         this.currentLevelLines = 0;
         this.linesToNextLevel = 10;
@@ -502,7 +502,7 @@ class Game {
         this.nextPiece = this.createNewPiece();
         this.score = 0;
         this.level = 1;
-        this.maxLevel = 30;
+        this.maxLevel = 20;
         this.linesCleared = 0;
         this.currentLevelLines = 0;
         this.linesToNextLevel = 10;
