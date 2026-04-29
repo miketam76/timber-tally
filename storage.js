@@ -2,14 +2,32 @@
 
 class GameStorage {
     constructor() {
-        this.leaderboardKey = 'Stacker_leaderboard';
+        // New canonical key for this project. Legacy key is preserved for migration.
+        this.leaderboardKey = 'TimberTally_leaderboard';
+        this.legacyKey = 'Stacker_leaderboard';
         this.maxScores = 10;
     }
 
     // Get all high scores (sorted by score, descending)
     getLeaderboard() {
+        // Prefer the new key. If absent but a legacy key exists, migrate it.
         const data = localStorage.getItem(this.leaderboardKey);
-        return data ? JSON.parse(data) : [];
+        if (data) return JSON.parse(data);
+
+        try {
+            const legacy = localStorage.getItem(this.legacyKey);
+            if (legacy) {
+                // Migrate legacy leaderboard to the new key and keep data intact.
+                localStorage.setItem(this.leaderboardKey, legacy);
+                // Optionally remove legacy key to avoid confusion; keep for safety commented.
+                // localStorage.removeItem(this.legacyKey);
+                return JSON.parse(legacy);
+            }
+        } catch (e) {
+            // If parsing fails, fall through to return empty array
+        }
+
+        return [];
     }
 
     // Save a new score to leaderboard

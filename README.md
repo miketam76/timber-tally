@@ -22,14 +22,14 @@ You play a beaver named Chuck, a "Timber Tally" worker who manages logs as they 
 
 ## How to Play
 
-At the start screen, choose your music, review the controls, or open About to see the story artwork and background. Press Start Shift when you are ready to begin the run.
+At the start screen, choose your music, review the controls, or open About to see the story artwork and background. Click the START SHIFT button to begin the run.
 
 ### Controls
 
 **Desktop Keyboard:**
-- `←  →` - Move log left/right
-- `↑  W  X` - Rotate log
-- `↓  S` - Soft drop (accelerated falling)
+- `←` / `→` or `A` / `D` (or `WASD`) - Move log left/right
+- `↑` / `W` / `X` - Rotate log
+- `↓` / `S` - Soft drop (accelerated falling)
 - `SPACE` - Hard drop (instant to bottom)
 - `P` - Pause/Resume
 
@@ -93,6 +93,7 @@ If you prefer Node.js, you can use any static file server such as `npx serve` or
 - `audio.js` - Sound effects using Web Audio API
 - `music.js` - Procedural music themes
 - `storage.js` - Leaderboard persistence with localStorage
+- `storage.js` - Leaderboard persistence with localStorage (uses localStorage key `TimberTally_leaderboard`; legacy `Stacker_leaderboard` will be migrated automatically)
 
 ## Browser Support
 
@@ -113,6 +114,8 @@ Works on all modern browsers with HTML5 Canvas and Web Audio API support:
 ## Music & Audio
 
 The game includes a **procedurally generated music system** with 3 selectable themes. No external files needed - the music is created in real-time using the Web Audio API!
+
+Note: Some browsers (notably mobile Safari and other mobile browsers) require a user interaction (click/tap) before the Web Audio API will produce sound. If you don't hear audio immediately, interact with the page (for example, press the START SHIFT button or tap the screen) to enable sound.
 
 ### 🎵 Music Themes
 
