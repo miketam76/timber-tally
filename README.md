@@ -1,34 +1,11 @@
 # Timber Tally
 
-# Disclaimer
-This build includes three distinct narrative endings selected by a combination of final earnings and which contracts (levels) you passed. Earnings are displayed as dollars at $0.01 per point.
-
-1. Open the game page in your browser and open DevTools (F12).
-Timber Tally is an alternate-history lumber trade story set in the late 1800s, where humans and highly intelligent beavers run the river timber economy together. The opening handshake marks the Great Log Accord, a business deal that links beaver timber supply with human industry and technology.
+An alternate-history lumber trade story set in the late 1800s, where humans and highly intelligent beavers run the river timber economy together. The opening handshake marks the Great Log Accord, a business deal that links beaver timber supply with human industry and technology.
 
 You play a beaver named Chuck, a "Timber Tally" worker who manages logs as they float down the river. The goal is not just to clear lines, but to complete orders, keep the ledger moving, and ship perfect stacks off to human cities by wagon or steamboat. As contracts grow, the work gets bigger and the stakes rise, from cabins to railroads and Victorian megaprojects.
-    // Points chosen to meet the new dollar+level rules. Points = dollars * 100
-    const scoreByVariant = {
-        tradition: 20000, // $200 -> between $100 and $450
-        expansion: 60000, // $600 -> between $450 and $1000
-        township: 150000 // $1500 -> > $1000
-    };
-    if (!gameUI || !game) return console.error('gameUI/game not found');
-    // Ensure the game's maxLevel is set (default 20) so final-ending checks work
-    game.maxLevel = game.maxLevel || 20;
 
-    // Set a matching `game.level` for the chosen variant so the level checks pass
-    if (variant === 'tradition') {
-        game.level = 10; // passed level 9
-    } else if (variant === 'expansion') {
-        game.level = 12; // passed level 11
-    } else if (variant === 'township') {
-        game.level = game.maxLevel; // reached final level
-    }
+## Features
 
-    game.score = scoreByVariant[variant];
-    gameUI.startEndingSequence();
-    console.log('Triggered', variant, '->', gameUI.chooseEndingVariant(game.score));
 - 💵 **Earnings System** - Contract bonuses add to your final total
 - 🎮 **Responsive Controls** - Keyboard plus a mobile on-screen gamepad
 - 👻 **Ghost Piece** - Preview showing where your current log stack will land
@@ -36,6 +13,24 @@ You play a beaver named Chuck, a "Timber Tally" worker who manages logs as they 
 - 💾 **Local Leaderboard** - High scores saved to browser storage
 - ⏸️ **Pause/Resume** - Play at your own pace
 - 📱 **Mobile-Friendly** - Sidebar HUD and bottom gamepad for touch play
+
+## Narrative Endings
+
+The game includes three distinct narrative endings determined by both your **minimum level requirement** and **total money earned**. Earnings are displayed as dollars at $0.01 per point.
+
+| Ending | Min Level | Earnings Range | Description |
+|---|---:|---:|---|
+| **Ending 1** | Level 9+ | $250–$450 | Humble Hauler |
+| **Ending 2** | Level 9+ | $450–$1000 | Seasoned Shipper |
+| **Ending 3** | Level 14+ | Over $1000 | Legend of the Woods |
+
+You must reach **both** the minimum level **AND** earn within the corresponding earnings range to unlock each ending.
+
+### Special Achievement
+
+🏆 **BEST TIMBER TALLY EVER!**
+
+If you reach **Level 20** (the final level) and earn over **$1000**, you'll unlock the special **"BEST TIMBER TALLY EVER!"** title on your final score display!
 
 ## How to Play
 
@@ -188,11 +183,15 @@ Change `pitch` values (note names), `duration` (beat length), or `volume` to cus
 
 This build includes three distinct narrative endings selected by a combination of final earnings and which contracts (levels) you passed. Earnings are displayed as dollars at $0.01 per point.
 
-- Ending 1 (Tradition / Humble Hauler): final earnings between $100 and $450 (inclusive). Player must have passed level 9 to see this ending.
-- Ending 2 (Expansion / Seasoned Shipper): final earnings greater than $450 and up to $1,000 (inclusive). Player must have passed level 9 to see this ending.
-- Ending 3 (Township / Legend of the Woods): final earnings greater than $1,000. Player must have reached at least level 13 to see this ending.
+- **Ending 1** (Humble Hauler): final earnings **$250–$450** (inclusive). Player must have passed **Level 9** to see this ending.
+- **Ending 2** (Seasoned Shipper): final earnings **$450–$1,000** (inclusive). Player must have passed **Level 9** to see this ending.
+- **Ending 3** (Legend of the Woods): final earnings **over $1,000**. Player must have reached at least **Level 14** to see this ending.
 
-These endings are enforced in `ui.js` (chooseEndingVariant) and require both the dollar thresholds and the level progress conditions above. If a run doesn't match any of the strict rules, the UI falls back to a permissive dollar-only mapping so a reasonable ending is still shown.
+### BEST TIMBER TALLY EVER Achievement
+
+Reach **Level 20** with over **$1,000** earned to unlock the **"BEST TIMBER TALLY EVER!"** title on your final score.
+
+These endings are enforced in `ui.js` (chooseEndingVariant) and require both the dollar thresholds and the level progress conditions above.
 
 If you'd like to test them quickly while running the game (for example using VS Code's Go Live):
 

@@ -28,6 +28,7 @@ class GameUI {
         this.winMainMenuBtn = document.getElementById('winMainMenuBtn');
         this.gameOverLeaderboardList = document.getElementById('gameOverLeaderboardList');
         this.winFinalScoreDisplay = document.getElementById('winFinalScore');
+        this.winSubtitle = document.querySelector('.win-subtitle');
 
         // Ending sequence overlay (5 scenes)
         this.endingOverlay = document.getElementById('endingOverlay');
@@ -707,9 +708,28 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
         this.pauseBtn.textContent = '⏸️';
         if (this.btnPauseMobile) this.btnPauseMobile.textContent = '⏸';
         if (this.contractOverlay) this.contractOverlay.classList.add('hidden');
-        this.gameOverOverlay.classList.remove('hidden');
+
+        // Save score and update leaderboard first
         gameStorage.saveScore(game.score, game.level);
         this.updateLeaderboardDisplay();
+
+        // Determine whether to show an ending sequence on game-over
+        const level = (typeof game !== 'undefined' && game && game.level) ? game.level : 1;
+        const variant = this.chooseEndingVariant ? this.chooseEndingVariant(game.score) : null;
+
+        // Show ending on game-over only if player has passed level 9 (strictly > 9)
+        // and a variant was selected based on earnings.
+        const showEndingOnDeath = Boolean(variant) && (level > 9);
+
+        if (showEndingOnDeath) {
+            // Start the ending story sequence instead of the regular game-over modal.
+            this.startEndingSequence();
+            this.updateMobileControlsVisibility();
+            return;
+        }
+
+        // Fallback: show the regular game-over overlay
+        this.gameOverOverlay.classList.remove('hidden');
         this.updateMobileControlsVisibility();
     }
 
@@ -729,9 +749,9 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
 
     startEndingSequence() {
         if (!this.endingOverlay) return;
-
         // Choose ending variant by player's final score (game.score)
         const variant = this.chooseEndingVariant ? this.chooseEndingVariant(game.score) : 'township';
+
         this.endingScenes = (this.endingVariants[variant] || this.endingVariants.township).slice();
 
         this.currentEndingIndex = 0;
@@ -747,22 +767,25 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
         // Convert points to dollars at $0.01/point for readable thresholds
         const dollars = score / 100;
 
-        // New scheme (requires both earnings and level progress):
-        // Ending 1 (tradition): >= $100 and <= $450 (passed level 9 required)
-        // Ending 2 (expansion): > $450 and <= $1000 (passed level 9 required)
-        // Ending 3 (township): > $1000 (minimum level 13 required)
+        // Ending requirements:
+        // - Ending 1 & 2: require level > 9
+        // - Ending 3: require level > 14
         const level = (typeof game !== 'undefined' && game && game.level) ? game.level : 1;
-        const maxLevel = (typeof game !== 'undefined' && game && game.maxLevel) ? game.maxLevel : 20;
 
-        // Check strict user-specified endings first
-        if (dollars > 1000 && level >= 13) return 'township';
-        if (dollars > 450 && dollars <= 1000 && level > 9) return 'expansion';
-        if (dollars >= 100 && dollars <= 450 && level > 9) return 'tradition';
+        // Ending 3: requires level > 14 and earnings > $1000
+        if (level > 14 && dollars > 1000) return 'township';
 
-        // Fallback to previous, more permissive dollar-only mapping
-        if (dollars < 100) return 'tradition';
-        if (dollars < 1000) return 'expansion';
-        return 'township';
+        // Ending 1 & 2: require level > 9
+        if (!(level > 9)) return null;
+
+        // Ending 2: $450-$1000 (inclusive boundaries)
+        if (dollars > 450 && dollars <= 1000) return 'expansion';
+
+        // Ending 1: $250-$450 (inclusive lower boundary)
+        if (dollars >= 250) return 'tradition';
+
+        // Below $250: no valid ending
+        return null;
     }
 
     showEndingScene(index) {
@@ -797,7 +820,29 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
         this.disableModalScroll(this.endingOverlay);
         this.endingOverlay.classList.add('hidden');
         // After the story, show the credits/modal that existed previously
-        if (this.winFinalScoreDisplay) this.winFinalScoreDisplay.textContent = this.formatCurrency(game.score);
+
+        // Check for BEST TIMBER TALLY EVER achievement
+        const level = (typeof game !== 'undefined' && game && game.level) ? game.level : 1;
+        const dollars = game.score / 100;
+        const isBestTimberId = level >= 20 && dollars > 1000;
+
+        if (this.winFinalScoreDisplay) {
+            const scoreText = this.formatCurrency(game.score);
+            this.winFinalScoreDisplay.textContent = isBestTimberId
+                ? `✨ BEST TIMBER TALLY EVER! ✨\n${scoreText}`
+                : scoreText;
+        }
+        // Set appropriate subtitle: only show the "final level" message when the
+        // player actually finished level 20. Otherwise show the current contract level.
+        if (this.winSubtitle) {
+            if (level >= 20) {
+                this.winSubtitle.textContent = 'You finished the final level of Timber Tally.';
+            } else {
+                const safeLevel = Math.max(1, Math.min(level, game.maxLevel || 20));
+                this.winSubtitle.textContent = `You reached contract ${safeLevel} of Timber Tally.`;
+            }
+        }
+
         if (this.gameWinOverlay) this.gameWinOverlay.classList.remove('hidden');
         musicManager.playTheme('victory');
         this.updateMobileControlsVisibility();
