@@ -748,15 +748,15 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
         const dollars = score / 100;
 
         // New scheme (requires both earnings and level progress):
-        // Ending 1 (tradition): >= $100 and <= $450 and passed level 9
-        // Ending 2 (expansion): > $450 and <= $1000 and passed level 11
-        // Ending 3 (township): > $1000 and passed the final level (maxLevel)
+        // Ending 1 (tradition): >= $100 and <= $450 (passed level 9 required)
+        // Ending 2 (expansion): > $450 and <= $1000 (passed level 9 required)
+        // Ending 3 (township): > $1000 (minimum level 13 required)
         const level = (typeof game !== 'undefined' && game && game.level) ? game.level : 1;
         const maxLevel = (typeof game !== 'undefined' && game && game.maxLevel) ? game.maxLevel : 20;
 
         // Check strict user-specified endings first
-        if (dollars > 1000 && level >= maxLevel) return 'township';
-        if (dollars > 450 && dollars <= 1000 && level > 11) return 'expansion';
+        if (dollars > 1000 && level >= 13) return 'township';
+        if (dollars > 450 && dollars <= 1000 && level > 9) return 'expansion';
         if (dollars >= 100 && dollars <= 450 && level > 9) return 'tradition';
 
         // Fallback to previous, more permissive dollar-only mapping

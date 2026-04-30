@@ -188,9 +188,9 @@ Change `pitch` values (note names), `duration` (beat length), or `volume` to cus
 
 This build includes three distinct narrative endings selected by a combination of final earnings and which contracts (levels) you passed. Earnings are displayed as dollars at $0.01 per point.
 
-- Ending 1 (Tradition / Humble Hauler): final earnings between $100 and $450 (inclusive) AND the player passed level 9.
-- Ending 2 (Expansion / Seasoned Shipper): final earnings greater than $450 and up to $1,000 (inclusive) AND the player passed level 11.
-- Ending 3 (Township / Legend of the Woods): final earnings greater than $1,000 AND the player completed the final contract (reached the configured `maxLevel`, default 20).
+- Ending 1 (Tradition / Humble Hauler): final earnings between $100 and $450 (inclusive). Player must have passed level 9 to see this ending.
+- Ending 2 (Expansion / Seasoned Shipper): final earnings greater than $450 and up to $1,000 (inclusive). Player must have passed level 9 to see this ending.
+- Ending 3 (Township / Legend of the Woods): final earnings greater than $1,000. Player must have reached at least level 13 to see this ending.
 
 These endings are enforced in `ui.js` (chooseEndingVariant) and require both the dollar thresholds and the level progress conditions above. If a run doesn't match any of the strict rules, the UI falls back to a permissive dollar-only mapping so a reasonable ending is still shown.
 
@@ -201,8 +201,23 @@ If you'd like to test them quickly while running the game (for example using VS 
 
 ```javascript
 function forceEnding(variant) {
-    const scoreByVariant = { tradition: 5000, expansion: 30000, township: 150000 };
+    // Points chosen to meet the new dollar+level rules. Points = dollars * 100
+    const scoreByVariant = {
+        tradition: 20000, // $200 -> between $100 and $450
+        expansion: 60000, // $600 -> between $450 and $1000
+        township: 150000 // $1500 -> > $1000
+    };
     if (!gameUI || !game) return console.error('gameUI/game not found');
+
+    // Set a matching `game.level` for the chosen variant so the level checks pass
+    if (variant === 'tradition') {
+        game.level = 10; // passed level 9
+    } else if (variant === 'expansion') {
+        game.level = 10; // passed level 9
+    } else if (variant === 'township') {
+        game.level = 13; // minimum required for Township
+    }
+
     game.score = scoreByVariant[variant];
     gameUI.startEndingSequence();
     console.log('Triggered', variant, '->', gameUI.chooseEndingVariant(game.score));
