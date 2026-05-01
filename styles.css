@@ -1235,14 +1235,67 @@ body::after {
 .controls-info h3 {
     color: #f0d5a8;
     font-size: 1rem;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
 }
 
-.controls-info p {
+.controls-columns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    align-items: stretch;
+}
+
+.controls-column {
+    background: linear-gradient(180deg, rgba(110, 78, 47, 0.2), rgba(50, 34, 23, 0.16));
+    border: 1px solid rgba(228, 193, 139, 0.25);
+    border-radius: 6px;
+    padding: 10px 12px;
+}
+
+.controls-column h4 {
+    color: #f0d5a8;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+    font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+}
+
+.controls-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 5px;
+}
+
+.controls-list li,
+.controls-note,
+.controls-mobile-notes p {
     color: #f6e8d1;
     font-size: 0.85rem;
     margin: 5px 0;
+    line-height: 1.35;
+}
+
+.controls-note {
+    margin: 0;
+}
+
+.controls-mobile-notes {
+    margin-top: 0;
+    padding-top: 10px;
+    border-top: none;
+}
+
+.controls-mobile-notes p {
+    margin: 4px 0;
+}
+
+@media (max-width: 760px) {
+    .controls-columns {
+        grid-template-columns: 1fr;
+    }
 }
 
 .leaderboard-list {

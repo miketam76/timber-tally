@@ -98,15 +98,28 @@
 
                 <div class="controls-info">
                     <h3>CONTROLS</h3>
-                    <p>⌨️ Arrow Keys / WASD - Move</p>
-                    <p>⌨️ Up / X - Rotate</p>
-                    <p>⌨️ Down / S - Soft Drop</p>
-                    <p>⌨️ Space - Hard Drop</p>
-                    <p>⌨️ P - Pause</p>
-                    <p>🎮 Desktop Gamepad: Connect a controller, then press any button to reveal GAMEPAD SETUP and
-                        map the buttons before starting</p>
-                    <p>📱 Mobile D-pad: Hold ◀ ▶ to slide, hold ▼ for soft drop, ▲ rotates</p>
-                    <p>📱 Mobile Buttons: A rotates, B hard drops, top ⏸ pauses</p>
+                    <div class="controls-columns">
+                        <div class="controls-column">
+                            <h4>⌨️ Keyboard</h4>
+                            <ul class="controls-list">
+                                <li>Arrow Keys / WASD: Move</li>
+                                <li>Up / X: Rotate</li>
+                                <li>Down / S: Soft Drop</li>
+                                <li>Space: Hard Drop</li>
+                                <li>P: Pause</li>
+                            </ul>
+                        </div>
+                        <div class="controls-column">
+                            <h4>🎮 Desktop Gamepad</h4>
+                            <p class="controls-note">Connect a controller, then press any button to reveal GAMEPAD SETUP
+                                and map buttons before starting.</p>
+                        </div>
+                        <div class="controls-column controls-mobile-notes">
+                            <h4>📱 Mobile</h4>
+                            <p>Mobile D-pad: Hold ◀ ▶ to slide, hold ▼ for soft drop, ▲ rotates</p>
+                            <p>Mobile Buttons: A rotates, B hard drops, top ⏸ pauses</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="start-actions">
                     <button id="aboutBtn" class="button button-secondary">ABOUT</button>
