@@ -7,7 +7,7 @@ You play a beaver named Chuck, a "Timber Tally" worker who manages logs as they 
 ## Features
 
 - 💵 **Earnings System** - Contract bonuses add to your final total
-- 🎮 **Responsive Controls** - Keyboard plus a mobile on-screen gamepad
+- 🎮 **Responsive Controls** - Keyboard, desktop hardware gamepad setup, plus a mobile on-screen gamepad
 - 👻 **Ghost Piece** - Preview showing where your current log stack will land
 - 🔊 **Sound Effects** - Audio feedback with mute toggle
 - 💾 **Local Leaderboard** - High scores saved to browser storage
@@ -44,6 +44,11 @@ At the start screen, choose your music, review the controls, or open About to se
 - `↓` / `S` - Soft drop (accelerated falling)
 - `SPACE` - Hard drop (instant to bottom)
 - `P` - Pause/Resume
+
+**Desktop Gamepad:**
+- Connect a controller in a desktop browser, then press any button to reveal **GAMEPAD SETUP** on the start screen
+- The setup flow lets you map buttons and sticks to move, rotate, soft drop, hard drop, and pause
+- Gamepad support is limited to desktop viewports so mobile touch controls stay separate
 
 **Mobile Gamepad:**
 - **D-pad Left/Right** - Move piece left/right (hold to repeat)
@@ -115,13 +120,16 @@ Works on all modern browsers with HTML5 Canvas and Web Audio API support:
 - Safari 11+
 - Mobile browsers (iOS Safari, Android Chrome, Firefox Mobile)
 
+Hardware gamepad support uses the standard browser Gamepad API, which is best supported on desktop browsers.
+
 ## Tips
 
 1. **Watch the ghost piece** - It shows where your current log stack will land
 2. **Aim for full loads** - Bigger clears earn the largest contract bonuses
 3. **Speed matters** - Higher contracts move faster and raise the pressure
 4. **Mobile gameplay** - Use the bottom gamepad controls; hold directional buttons for smoother movement
-5. **Music selection** - Choose your music theme before starting the game!
+5. **Desktop gamepad setup** - If you're using a controller, map it from the start screen before pressing START SHIFT
+6. **Music selection** - Choose your music theme before starting the game!
 
 ## Music & Audio
 

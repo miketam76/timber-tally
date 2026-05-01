@@ -103,11 +103,14 @@
                     <p>⌨️ Down / S - Soft Drop</p>
                     <p>⌨️ Space - Hard Drop</p>
                     <p>⌨️ P - Pause</p>
+                    <p>🎮 Desktop Gamepad: Connect a controller, then press any button to reveal GAMEPAD SETUP and
+                        map the buttons before starting</p>
                     <p>📱 Mobile D-pad: Hold ◀ ▶ to slide, hold ▼ for soft drop, ▲ rotates</p>
                     <p>📱 Mobile Buttons: A rotates, B hard drops, top ⏸ pauses</p>
                 </div>
                 <div class="start-actions">
                     <button id="aboutBtn" class="button button-secondary">ABOUT</button>
+                    <button id="gamepadSetupBtn" class="button button-secondary hidden">GAMEPAD SETUP</button>
                     <button id="startBtn" class="button button-large">START SHIFT</button>
                 </div>
             </div>
@@ -229,6 +232,21 @@
             </div>
         </div>
 
+        <!-- Gamepad Setup Modal -->
+        <div id="gamepadModal" class="overlay hidden">
+            <div class="overlay-content gamepad-setup-modal" role="dialog" aria-modal="true"
+                aria-labelledby="gamepadSetupTitle">
+                <h2 id="gamepadSetupTitle">Gamepad Setup</h2>
+                <div class="gamepad-setup-content">
+                    <p id="gamepadSetupInstruction">Press any button on your gamepad to map:<br><br><strong
+                            id="gamepadSetupActionName">Move Left</strong></p>
+                    <div class="gamepad-setup-progress">
+                        Action <span id="gamepadSetupCurrentStep">1</span> of <span id="gamepadSetupTotalSteps">6</span>
+                    </div>
+                    <button id="gamepadSetupCancelBtn" class="button button-secondary">CANCEL</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="storage.js"></script>

@@ -15,6 +15,14 @@ class GameUI {
         this.startOverlay = document.getElementById('startOverlay');
         this.aboutOverlay = document.getElementById('aboutOverlay');
         this.startBtn = document.getElementById('startBtn');
+        this.gamepadSetupBtn = document.getElementById('gamepadSetupBtn');
+        this.gamepadModal = document.getElementById('gamepadModal');
+        this.gamepadSetupInstruction = document.getElementById('gamepadSetupInstruction');
+        this.gamepadSetupActionName = document.getElementById('gamepadSetupActionName');
+        this.gamepadSetupCurrentStep = document.getElementById('gamepadSetupCurrentStep');
+        this.gamepadSetupTotalSteps = document.getElementById('gamepadSetupTotalSteps');
+        this.gamepadSetupCancelBtn = document.getElementById('gamepadSetupCancelBtn');
+
         this.aboutBtn = document.getElementById('aboutBtn');
         this.aboutCloseBtn = document.getElementById('aboutCloseBtn');
         this.muteBtn = document.getElementById('muteBtn');
@@ -167,6 +175,36 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
         this.touchHardDropThreshold = 65;
         this.touchAxisDominanceRatio = 1.25;
 
+        // Hardware Gamepad State
+        this.gamepadConnected = false;
+        this.gamepadSetupActive = false;
+        this.gamepadPolling = false;
+        this.lastGamepadState = { buttons: [], axes: [] };
+
+        // Define mappable actions
+        this.mappableActions = [
+            { id: 'left', name: 'Move Left' },
+            { id: 'right', name: 'Move Right' },
+            { id: 'rotate', name: 'Rotate' },
+            { id: 'softDrop', name: 'Soft Drop' },
+            { id: 'hardDrop', name: 'Hard Drop' },
+            { id: 'pause', name: 'Pause' }
+        ];
+        this.currentSetupStep = 0;
+
+        // Load mapping or use defaults (axes vs buttons)
+        const savedMappingStr = localStorage.getItem('TimberTally_gamepadMapping');
+        const savedMapping = savedMappingStr ? JSON.parse(savedMappingStr) : null;
+        this.gamepadMapping = savedMapping || {
+            left: { type: 'axis', index: 0, direction: -1 }, // Left stick left
+            right: { type: 'axis', index: 0, direction: 1 },  // Left stick right
+            rotate: { type: 'button', index: 0 },             // A/Cross
+            softDrop: { type: 'axis', index: 1, direction: 1 },// Left stick down
+            hardDrop: { type: 'button', index: 1 },           // B/Circle
+            pause: { type: 'button', index: 9 }               // Start/Options
+        };
+        // End Gamepad state
+
         // Contract summary callbacks
         game.onContractSummaryStart = (summary) => {
             if (!this.contractOverlay) return;
@@ -224,6 +262,8 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
 
         // Button controls
         this.startBtn.addEventListener('click', () => this.startGame());
+        if (this.gamepadSetupBtn) this.gamepadSetupBtn.addEventListener('click', () => this.startGamepadSetup());
+        if (this.gamepadSetupCancelBtn) this.gamepadSetupCancelBtn.addEventListener('click', () => this.cancelGamepadSetup());
         if (this.aboutBtn) this.aboutBtn.addEventListener('click', () => this.showAbout());
         if (this.aboutCloseBtn) this.aboutCloseBtn.addEventListener('click', () => this.hideAbout());
         this.muteBtn.addEventListener('click', () => this.toggleMute());
@@ -265,17 +305,267 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
             });
         });
 
+        // Hardware Gamepad connection listeners
+        window.addEventListener('gamepadconnected', (e) => this.handleGamepadConnected(e));
+        window.addEventListener('gamepaddisconnected', (e) => this.handleGamepadDisconnected(e));
+
+        // Initial gamepad check (sometimes gamepads are connected before event is attached)
+        this.checkInitialGamepad();
+
         this.bindMobileGamepadControls();
-        window.addEventListener('resize', () => this.updateMobileControlsVisibility());
+        window.addEventListener('resize', () => {
+            this.updateMobileControlsVisibility();
+            this.updateGamepadSetupButtonVisibility();
+        });
     }
 
     isMobileViewport() {
         return window.matchMedia('(max-width: 600px)').matches;
     }
 
-    bindMobileGamepadControls() {
-        if (!this.mobileGamepad) return;
+    // --- Hardware Gamepad Methods ---
 
+    updateGamepadSetupButtonVisibility() {
+        if (!this.gamepadSetupBtn) return;
+        if (this.gamepadConnected && !this.isMobileViewport()) {
+            this.gamepadSetupBtn.classList.remove('hidden');
+        } else {
+            this.gamepadSetupBtn.classList.add('hidden');
+        }
+    }
+
+    checkInitialGamepad() {
+        const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+        if (Array.from(gamepads).some(gp => gp !== null)) {
+            this.gamepadConnected = true;
+            this.updateGamepadSetupButtonVisibility();
+            if (!this.gamepadPolling && !this.isMobileViewport()) {
+                this.gamepadPolling = true;
+                requestAnimationFrame(() => this.pollGamepad());
+            }
+        }
+    }
+
+    handleGamepadConnected(e) {
+        console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+            e.gamepad.index, e.gamepad.id,
+            e.gamepad.buttons.length, e.gamepad.axes.length);
+        this.gamepadConnected = true;
+        this.updateGamepadSetupButtonVisibility();
+
+        if (!this.gamepadPolling && !this.isMobileViewport()) {
+            this.gamepadPolling = true;
+            requestAnimationFrame(() => this.pollGamepad());
+        }
+    }
+
+    handleGamepadDisconnected(e) {
+        console.log("Gamepad disconnected from index %d: %s",
+            e.gamepad.index, e.gamepad.id);
+        const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+        const hasGamepad = Array.from(gamepads).some(gp => gp !== null);
+        if (!hasGamepad) {
+            this.gamepadConnected = false;
+            this.gamepadPolling = false;
+            this.updateGamepadSetupButtonVisibility();
+            if (this.gamepadSetupActive) {
+                this.cancelGamepadSetup();
+            }
+        }
+    }
+
+    startGamepadSetup() {
+        this.gamepadSetupActive = true;
+        this.currentSetupStep = 0;
+        this.gamepadModal.classList.remove('hidden');
+        this.updateGamepadSetupUI();
+    }
+
+    cancelGamepadSetup() {
+        this.gamepadSetupActive = false;
+        this.gamepadModal.classList.add('hidden');
+    }
+
+    updateGamepadSetupUI() {
+        if (this.currentSetupStep < this.mappableActions.length) {
+            const action = this.mappableActions[this.currentSetupStep];
+            this.gamepadSetupActionName.textContent = action.name;
+            this.gamepadSetupCurrentStep.textContent = (this.currentSetupStep + 1).toString();
+            this.gamepadSetupTotalSteps.textContent = this.mappableActions.length.toString();
+        } else {
+            // Setup complete
+            this.gamepadSetupActive = false;
+            this.gamepadModal.classList.add('hidden');
+            localStorage.setItem('TimberTally_gamepadMapping', JSON.stringify(this.gamepadMapping));
+        }
+    }
+
+    pollGamepad() {
+        if (!this.gamepadPolling) return;
+
+        if (this.isMobileViewport()) {
+            // Wait for viewport to change or disconnect
+            requestAnimationFrame(() => this.pollGamepad());
+            return;
+        }
+
+        const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+        if (!gamepads) {
+            requestAnimationFrame(() => this.pollGamepad());
+            return;
+        }
+
+        const gp = gamepads[0]; // Just use first connected gamepad for now
+        if (!gp) {
+            requestAnimationFrame(() => this.pollGamepad());
+            return;
+        }
+
+        if (this.gamepadSetupActive) {
+            this.handleGamepadSetupInput(gp);
+        } else if (this.gameStarted && !this.gameOverShown && !game.isContractSummaryActive) {
+            this.handleGamepadGameInput(gp);
+        }
+
+        // Store current state for delta processing in next frame
+        this.lastGamepadState = {
+            buttons: gp.buttons ? Array.from(gp.buttons).map(b => b ? b.pressed : false) : [],
+            axes: gp.axes ? [...gp.axes] : [],
+            wasSoftDropping: this.lastGamepadState ? this.lastGamepadState.wasSoftDropping : false
+        };
+
+        requestAnimationFrame(() => this.pollGamepad());
+    }
+
+    handleGamepadSetupInput(gp) {
+        const action = this.mappableActions[this.currentSetupStep];
+        if (!action) return;
+
+        // Check for button presses
+        for (let i = 0; i < gp.buttons.length; i++) {
+            if (gp.buttons[i].pressed && (!this.lastGamepadState.buttons || !this.lastGamepadState.buttons[i])) {
+                this.gamepadMapping[action.id] = { type: 'button', index: i };
+                this.currentSetupStep++;
+                this.updateGamepadSetupUI();
+                return;
+            }
+        }
+
+        // Check for axis movement (> 0.5 threshold)
+        for (let i = 0; i < gp.axes.length; i++) {
+            const value = gp.axes[i];
+            const prevValue = this.lastGamepadState.axes ? this.lastGamepadState.axes[i] : 0;
+
+            if (Math.abs(value) > 0.5 && Math.abs(prevValue) <= 0.5) {
+                this.gamepadMapping[action.id] = { type: 'axis', index: i, direction: value > 0 ? 1 : -1 };
+                this.currentSetupStep++;
+                this.updateGamepadSetupUI();
+                return;
+            }
+        }
+    }
+
+    handleGamepadGameInput(gp) {
+        if (!game) return;
+
+        // Helper to check if mapped input is active
+        const isInputActive = (mappingId) => {
+            if (!gp || !gp.buttons || !gp.axes) return false;
+            const map = this.gamepadMapping[mappingId];
+            if (!map) return false;
+
+            if (map.type === 'button') {
+                return gp.buttons[map.index] && gp.buttons[map.index].pressed;
+            } else if (map.type === 'axis') {
+                const val = gp.axes[map.index];
+                if (val === undefined) return false;
+                if (map.direction > 0) return val > 0.5;
+                if (map.direction < 0) return val < -0.5;
+            }
+            return false;
+        };
+
+        // Helper to check if mapped input was just pressed (for single-fire actions)
+        const isInputJustPressed = (mappingId) => {
+            if (!gp || !gp.buttons || !gp.axes) return false;
+            const map = this.gamepadMapping[mappingId];
+            if (!map) return false;
+
+            if (map.type === 'button') {
+                return gp.buttons[map.index] && gp.buttons[map.index].pressed &&
+                    (!this.lastGamepadState || !this.lastGamepadState.buttons || !this.lastGamepadState.buttons[map.index]);
+            } else if (map.type === 'axis') {
+                const val = gp.axes[map.index];
+                if (val === undefined) return false;
+                const prevVal = (this.lastGamepadState && this.lastGamepadState.axes) ? this.lastGamepadState.axes[map.index] : 0;
+                if (map.direction > 0) return val > 0.5 && prevVal <= 0.5;
+                if (map.direction < 0) return val < -0.5 && prevVal >= -0.5;
+            }
+            return false;
+        };
+
+        // Pause
+        if (isInputJustPressed('pause')) {
+            this.togglePause();
+            return; // Don't process other inputs while pausing
+        }
+
+        if (game.isPaused) return;
+
+        // One-off actions
+        if (isInputJustPressed('rotate')) {
+            game.rotatePiece();
+        }
+        if (isInputJustPressed('hardDrop')) {
+            if (game.dropPieceToBottom) {
+                game.dropPieceToBottom();
+            }
+        }
+
+        // Continuous actions (need rate limiting, reusing touch/keyboard logic concept)
+        const now = Date.now();
+        if (!this.lastGamepadActionTime) this.lastGamepadActionTime = {};
+
+        const actionDelay = 100; // ms between continuous moves
+
+        if (isInputActive('left')) {
+            if (!this.lastGamepadActionTime.left || now - this.lastGamepadActionTime.left > actionDelay) {
+                game.movePieceLeft();
+                this.lastGamepadActionTime.left = now;
+            }
+        } else {
+            this.lastGamepadActionTime.left = 0;
+        }
+
+        if (isInputActive('right')) {
+            if (!this.lastGamepadActionTime.right || now - this.lastGamepadActionTime.right > actionDelay) {
+                game.movePieceRight();
+                this.lastGamepadActionTime.right = now;
+            }
+        } else {
+            this.lastGamepadActionTime.right = 0;
+        }
+
+        if (isInputActive('softDrop')) {
+            if (!this.lastGamepadActionTime.softDrop || now - this.lastGamepadActionTime.softDrop > 50) { // arbitrary fast speed
+                if (game.startSoftDrop) {
+                    game.startSoftDrop();
+                } else {
+                    game.movePieceDown();
+                }
+                this.lastGamepadActionTime.softDrop = now;
+            }
+        } else {
+            this.lastGamepadActionTime.softDrop = 0;
+            if (game.endSoftDrop && this.lastGamepadState.wasSoftDropping) {
+                game.endSoftDrop();
+            }
+        }
+
+        this.lastGamepadState.wasSoftDropping = isInputActive('softDrop');
+    }
+
+    bindMobileGamepadControls() {
         this.bindHeldActionButton(this.dpadLeft, 'left', () => game.movePieceLeft());
         this.bindHeldActionButton(this.dpadRight, 'right', () => game.movePieceRight());
         this.bindHeldActionButton(this.dpadUp, 'up', () => game.rotatePiece());
