@@ -8,7 +8,7 @@ You play a beaver named Chuck, a "Timber Tally" worker who manages logs as they 
 
 - 💵 **Earnings System** - Contract bonuses add to your final total
 - 🎮 **Responsive Controls** - Keyboard, desktop hardware gamepad setup, plus a mobile on-screen gamepad
-- 👻 **Ghost Piece** - Preview showing where your current log stack will land
+- 👻 **Ghost Piece Assist** - Optional landing preview showing where your current log stack will land
 - 🔊 **Sound Effects** - Audio feedback with mute toggle
 - 💾 **Local Leaderboard** - High scores saved to browser storage
 - ⏸️ **Pause/Resume** - Play at your own pace
@@ -34,7 +34,7 @@ If you reach **Level 20** (the final level) and earn over **$1000**, you'll unlo
 
 ## How to Play
 
-At the start screen, choose your music, review the controls, or open About to see the story artwork and background. Click the START SHIFT button to begin the run.
+At the start screen, choose your music, toggle ghost-piece assist, review the controls, or open About to see the story artwork and background. Click the START SHIFT button to begin the run.
 
 ### Controls
 
@@ -49,6 +49,10 @@ At the start screen, choose your music, review the controls, or open About to se
 - Connect a controller in a desktop browser, then press any button to reveal **GAMEPAD SETUP** on the start screen
 - The setup flow lets you map buttons and sticks to move, rotate, soft drop, hard drop, and pause
 - Gamepad support is limited to desktop viewports so mobile touch controls stay separate
+
+**Ghost Piece Assist:**
+- Use the **GHOST: ON/OFF** button on the start screen or the ghost icon in the in-game HUD to show or hide the landing preview
+- The setting is saved for next time, so players who prefer the original Tetrix-like feel can leave it off
 
 **Mobile Gamepad:**
 - **D-pad Left/Right** - Move piece left/right (hold to repeat)
@@ -124,7 +128,7 @@ Hardware gamepad support uses the standard browser Gamepad API, which is best su
 
 ## Tips
 
-1. **Watch the ghost piece** - It shows where your current log stack will land
+1. **Use ghost assist if you want it** - It shows where your current log stack will land, and you can turn it off for a cleaner classic feel
 2. **Aim for full loads** - Bigger clears earn the largest contract bonuses
 3. **Speed matters** - Higher contracts move faster and raise the pressure
 4. **Mobile gameplay** - Use the bottom gamepad controls; hold directional buttons for smoother movement

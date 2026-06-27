@@ -28,6 +28,8 @@ class GameUI {
         this.muteBtn = document.getElementById('muteBtn');
         this.pauseBtn = document.getElementById('pauseBtn');
         this.endGameBtn = document.getElementById('endGameBtn');
+        this.ghostPieceToggle = document.getElementById('ghostPieceToggle');
+        this.ghostPieceHudToggle = document.getElementById('ghostPieceHudToggle');
         this.gameOverOverlay = document.getElementById('gameOverOverlay');
         this.gameWinOverlay = document.getElementById('gameWinOverlay');
         this.restartBtn = document.getElementById('restartBtn');
@@ -203,6 +205,10 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
             hardDrop: { type: 'button', index: 1 },           // B/Circle
             pause: { type: 'button', index: 9 }               // Start/Options
         };
+
+        const savedGhostPieceEnabled = localStorage.getItem('TimberTally_ghostPieceEnabled');
+        this.ghostPieceEnabled = savedGhostPieceEnabled === null ? true : savedGhostPieceEnabled === 'true';
+        this.updateGhostPieceToggleUI();
         // End Gamepad state
 
         // Contract summary callbacks
@@ -269,6 +275,8 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
         this.muteBtn.addEventListener('click', () => this.toggleMute());
         this.pauseBtn.addEventListener('click', () => this.togglePause());
         this.endGameBtn.addEventListener('click', () => this.endGame());
+        if (this.ghostPieceToggle) this.ghostPieceToggle.addEventListener('click', () => this.toggleGhostPieceAssist());
+        if (this.ghostPieceHudToggle) this.ghostPieceHudToggle.addEventListener('click', () => this.toggleGhostPieceAssist());
         this.restartBtn.addEventListener('click', () => this.restartGame());
         this.mainMenuBtn.addEventListener('click', () => this.showMainMenu());
         if (this.winRestartBtn) this.winRestartBtn.addEventListener('click', () => this.restartGame());
@@ -321,6 +329,28 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
 
     isMobileViewport() {
         return window.matchMedia('(max-width: 600px)').matches;
+    }
+
+    updateGhostPieceToggleUI() {
+        const label = this.ghostPieceEnabled ? '👻 GHOST: ON' : '👻 GHOST: OFF';
+
+        if (this.ghostPieceToggle) {
+            this.ghostPieceToggle.textContent = label;
+            this.ghostPieceToggle.setAttribute('aria-pressed', String(this.ghostPieceEnabled));
+            this.ghostPieceToggle.title = this.ghostPieceEnabled ? 'Ghost piece assist on' : 'Ghost piece assist off';
+        }
+
+        if (this.ghostPieceHudToggle) {
+            this.ghostPieceHudToggle.textContent = this.ghostPieceEnabled ? '👻' : '🚫';
+            this.ghostPieceHudToggle.setAttribute('aria-pressed', String(this.ghostPieceEnabled));
+            this.ghostPieceHudToggle.title = this.ghostPieceEnabled ? 'Ghost piece assist on' : 'Ghost piece assist off';
+        }
+    }
+
+    toggleGhostPieceAssist() {
+        this.ghostPieceEnabled = !this.ghostPieceEnabled;
+        localStorage.setItem('TimberTally_ghostPieceEnabled', String(this.ghostPieceEnabled));
+        this.updateGhostPieceToggleUI();
     }
 
     // --- Hardware Gamepad Methods ---
@@ -1356,7 +1386,7 @@ Chuck and Wilks, now the grey-furred elders of the valley, watched the progress 
         }
 
         // Draw ghost piece (preview of where piece will land)
-        if (game.currentPiece) {
+        if (game.currentPiece && this.ghostPieceEnabled) {
             const ghostY = game.getGhostPieceY();
             const shape = game.getCurrentShape();
             for (let y = 0; y < shape.length; y++) {
