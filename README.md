@@ -4,6 +4,12 @@ An alternate-history lumber trade story set in the late 1800s, where humans and 
 
 You play a beaver named Chuck, a "Timber Tally" worker who manages logs as they float down the river. The goal is not just to clear lines, but to complete orders, keep the ledger moving, and ship perfect stacks off to human cities by wagon or steamboat. As contracts grow, the work gets bigger and the stakes rise, from cabins to railroads and Victorian megaprojects.
 
+## Disclaimer
+
+This project is inspired by falling-block puzzle mechanics popularized by Tetris. Timber Tally is an original work and is not affiliated with, endorsed by, sponsored by, or otherwise connected to The Tetris Company.
+
+All trademarks and registered trademarks are the property of their respective owners.
+
 ## Features
 
 - 💵 **Earnings System** - Contract bonuses add to your final total
